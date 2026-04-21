@@ -1,13 +1,13 @@
 "use client";
 
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CostTrendChart } from "@/components/dashboard/dashboard-charts";
 import { DataTable } from "@/components/common/data-table";
 import { SectionCard } from "@/components/common/section-card";
 import { AppShell } from "@/components/layout/app-shell";
-import { activityApi, dashboardApi, materialRequestApi, milestoneApi, projectApi, riskApi, wbsApi } from "@/lib/api";
-import type { ActivityItem, MaterialRequestItem, MilestoneItem, ProjectRecord, ReportSnapshot, RiskItem, WbsRecord } from "@/lib/types";
+import { activityApi, dashboardApi, materialRequestApi, milestoneApi, projectApi, riskApi, timesheetApi, wbsApi } from "@/lib/api";
+import type { ActivityItem, MaterialRequestItem, MilestoneItem, ProjectRecord, ReportSnapshot, RiskItem, TimesheetRecord, WbsRecord } from "@/lib/types";
 
 type ReportId =
   | "project-summary"
@@ -89,6 +89,7 @@ export default function ReportsPage() {
   const [materialRequests, setMaterialRequests] = useState<MaterialRequestItem[]>([]);
   const [milestones, setMilestones] = useState<MilestoneItem[]>([]);
   const [risks, setRisks] = useState<RiskItem[]>([]);
+  const [timesheets, setTimesheets] = useState<TimesheetRecord[]>([]);
   const [reportCatalog, setReportCatalog] = useState<ReportCatalogItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -100,11 +101,12 @@ export default function ReportsPage() {
       try {
         setIsLoading(true);
 
-        const [dashboardResponse, projectsResponse, risksResponse, materialRequestsResponse] = await Promise.all([
+        const [dashboardResponse, projectsResponse, risksResponse, materialRequestsResponse, timesheetResponse] = await Promise.all([
           dashboardApi.getSummary(),
           projectApi.getProjects(),
           riskApi.getRisks(),
           materialRequestApi.getMaterialRequests(),
+          timesheetApi.getTimesheets(),
         ]);
 
         const loadedProjects = (projectsResponse.data.data as Array<Omit<ProjectRecord, "id"> & { id: number | string }>).map((project) => ({
@@ -134,6 +136,25 @@ export default function ReportsPage() {
           id: String(item.id),
           projectId: String(item.projectId),
           activityId: String(item.activityId),
+        }));
+
+        const loadedTimesheets = (
+          timesheetResponse.data.data as Array<
+            Omit<TimesheetRecord, "id" | "userId" | "projectId" | "activityId"> & {
+              id: number | string;
+              userId: number | string;
+              projectId: number | string;
+              activityId: number | string;
+            }
+          >
+        ).map((timesheet) => ({
+          ...timesheet,
+          id: String(timesheet.id),
+          userId: String(timesheet.userId),
+          projectId: String(timesheet.projectId),
+          activityId: String(timesheet.activityId),
+          regularHours: Number(timesheet.regularHours),
+          overtimeHours: Number(timesheet.overtimeHours),
         }));
 
         const [wbsResponses, activityResponses, milestoneResponses] = await Promise.all([
@@ -188,6 +209,7 @@ export default function ReportsPage() {
         setMaterialRequests(loadedMaterialRequests);
         setMilestones(loadedMilestones);
         setRisks(loadedRisks);
+        setTimesheets(loadedTimesheets);
         setReportCatalog([
           {
             id: "project-summary",
@@ -220,9 +242,9 @@ export default function ReportsPage() {
           {
             id: "timesheet-utilization",
             name: "Timesheet utilization report",
-            description: "Labour utilization report slot is enabled and waiting for timesheet postings.",
-            records: null,
-            status: "pending",
+            description: "Employee hours captured from live timesheet entries for allocated and non-allocated activities.",
+            records: loadedTimesheets.length,
+            status: loadedTimesheets.length > 0 ? "ready" : "pending",
           },
           {
             id: "overhead-allocation",
@@ -276,6 +298,16 @@ export default function ReportsPage() {
       cancelled = true;
     };
   }, []);
+
+  const totalRegularHours = useMemo(
+    () => timesheets.reduce((sum, timesheet) => sum + timesheet.regularHours, 0),
+    [timesheets],
+  );
+
+  const totalOvertimeHours = useMemo(
+    () => timesheets.reduce((sum, timesheet) => sum + timesheet.overtimeHours, 0),
+    [timesheets],
+  );
 
   const selectedReportMeta = reportCatalog.find((report) => report.id === selectedReport);
 
@@ -392,6 +424,43 @@ export default function ReportsPage() {
           />
         );
       case "timesheet-utilization":
+        return (
+          <div className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-3">
+              <div className="rounded-[22px] border border-line bg-white/45 px-5 py-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Entries</p>
+                <p className="mt-2 text-2xl font-semibold text-brand-strong">{timesheets.length}</p>
+              </div>
+              <div className="rounded-[22px] border border-line bg-white/45 px-5 py-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Regular Hours</p>
+                <p className="mt-2 text-2xl font-semibold text-brand-strong">{totalRegularHours.toFixed(2)}</p>
+              </div>
+              <div className="rounded-[22px] border border-line bg-white/45 px-5 py-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Overtime Hours</p>
+                <p className="mt-2 text-2xl font-semibold text-brand-strong">{totalOvertimeHours.toFixed(2)}</p>
+              </div>
+            </div>
+
+            <DataTable
+              rows={timesheets}
+              columns={[
+                { key: "userCode", header: "Employee Code" },
+                { key: "employeeName", header: "Employee" },
+                { key: "projectCode", header: "Project" },
+                { key: "activityCode", header: "Activity" },
+                { key: "workDate", header: "Work Date" },
+                { key: "regularHours", header: "Regular Hrs", render: (row) => row.regularHours.toFixed(2) },
+                { key: "overtimeHours", header: "OT Hrs", render: (row) => row.overtimeHours.toFixed(2) },
+                {
+                  key: "allocatedActivity",
+                  header: "Entry Type",
+                  render: (row) => (row.allocatedActivity ? "Allocated" : "Non-Allocated"),
+                },
+                { key: "status", header: "Status" },
+              ]}
+            />
+          </div>
+        );
       case "overhead-allocation":
         return (
           <div className="rounded-[22px] border border-dashed border-line bg-white/35 px-5 py-10 text-sm text-slate-600">

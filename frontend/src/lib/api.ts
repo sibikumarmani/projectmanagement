@@ -45,6 +45,84 @@ export const authApi = {
   refresh: (payload: { refreshToken: string }) => api.post("/auth/refresh", payload),
 };
 
+export const userApi = {
+  getUsers: () => api.get("/users"),
+  createUser: (payload: {
+    fullName: string;
+    email: string;
+    password: string;
+    roleName: string;
+    active: boolean;
+    emailVerified: boolean;
+  }) => api.post("/users", payload),
+  updateUser: (
+    id: string,
+    payload: {
+      fullName: string;
+      email: string;
+      password?: string;
+      roleName: string;
+      active: boolean;
+      emailVerified: boolean;
+    },
+  ) => api.put(`/users/${id}`, payload),
+  getLatestResetCode: (id: string) => api.get(`/users/${id}/latest-reset-code`),
+};
+
+export const allocationApi = {
+  getAllocations: () => api.get("/employee-allocations"),
+  createAllocation: (payload: {
+    userId: number;
+    projectId: number;
+    activityId: number;
+    allocationDate: string;
+    allocationPercentage: number;
+    active: boolean;
+    remarks?: string;
+  }) => api.post("/employee-allocations", payload),
+  updateAllocation: (
+    id: string,
+    payload: {
+      userId: number;
+      projectId: number;
+      activityId: number;
+      allocationDate: string;
+      allocationPercentage: number;
+      active: boolean;
+      remarks?: string;
+    },
+  ) => api.put(`/employee-allocations/${id}`, payload),
+};
+
+export const timesheetApi = {
+  getTimesheets: () => api.get("/timesheets"),
+  createTimesheet: (payload: {
+    userId: number;
+    projectId: number;
+    activityId: number;
+    workDate: string;
+    regularHours: number;
+    overtimeHours: number;
+    allocatedActivity: boolean;
+    status: string;
+    remarks?: string;
+  }) => api.post("/timesheets", payload),
+  updateTimesheet: (
+    id: string,
+    payload: {
+      userId: number;
+      projectId: number;
+      activityId: number;
+      workDate: string;
+      regularHours: number;
+      overtimeHours: number;
+      allocatedActivity: boolean;
+      status: string;
+      remarks?: string;
+    },
+  ) => api.put(`/timesheets/${id}`, payload),
+};
+
 export const dashboardApi = {
   getSummary: () => api.get("/dashboard/summary"),
 };

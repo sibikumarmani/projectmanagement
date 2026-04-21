@@ -10,4 +10,6 @@ public interface PasswordResetCodeRepository extends JpaRepository<PasswordReset
     List<PasswordResetCodeEntity> findAllByEmailAndConsumedFalse(String email);
 
     Optional<PasswordResetCodeEntity> findTopByEmailAndResetCodeAndConsumedFalseOrderByIdDesc(String email, String resetCode);
+
+    Optional<PasswordResetCodeEntity> findTopByUserIdOrderByIdDesc(Long userId);
 }

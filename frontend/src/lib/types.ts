@@ -135,3 +135,60 @@ export type BillingItem = {
   status: "DRAFT" | "SUBMITTED" | "CERTIFIED" | "REJECTED" | "PAID";
   remarks: string | null;
 };
+
+export type UserRecord = {
+  id: string;
+  userCode: string;
+  fullName: string;
+  email: string;
+  roleName: string;
+  active: boolean;
+  emailVerified: boolean;
+};
+
+export type UserResetCodeRecord = {
+  userId: string;
+  userCode: string;
+  fullName: string;
+  email: string;
+  resetCode: string | null;
+  expiresAt: string | null;
+  consumed: boolean | null;
+  available: boolean;
+};
+
+export type EmployeeAllocationRecord = {
+  id: string;
+  userId: string;
+  userCode: string;
+  employeeName: string;
+  projectId: string;
+  projectCode: string;
+  projectName: string;
+  activityId: string;
+  activityCode: string;
+  activityName: string;
+  allocationDate: string;
+  allocationPercentage: number;
+  active: boolean;
+  remarks: string | null;
+};
+
+export type TimesheetRecord = {
+  id: string;
+  userId: string;
+  userCode: string;
+  employeeName: string;
+  projectId: string;
+  projectCode: string;
+  projectName: string;
+  activityId: string;
+  activityCode: string;
+  activityName: string;
+  workDate: string;
+  regularHours: number;
+  overtimeHours: number;
+  allocatedActivity: boolean;
+  status: string;
+  remarks: string | null;
+};
