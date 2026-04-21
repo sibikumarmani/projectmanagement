@@ -1,0 +1,6 @@
+backend/.env.properties
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+*.env
+*.env.local
