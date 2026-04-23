@@ -32,6 +32,19 @@ type DashboardSummaryResponse = {
   costSnapshots: ReportSnapshot[];
 };
 
+type ExportCell = string | number | boolean | null | undefined;
+
+type ExportColumn<T> = {
+  header: string;
+  value: (row: T) => ExportCell;
+};
+
+type ExportTable<T = unknown> = {
+  title: string;
+  columns: ExportColumn<T>[];
+  rows: T[];
+};
+
 function formatReportStatus(status: ReportCatalogItem["status"]) {
   if (status === "ready") {
     return "Ready";
@@ -78,6 +91,107 @@ function formatMaterialStatus(status: MaterialRequestItem["status"]) {
     .split("_")
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(" ");
+}
+
+function formatExportValue(value: ExportCell) {
+  if (value === null || value === undefined) {
+    return "";
+  }
+
+  return String(value);
+}
+
+function escapeHtml(value: ExportCell) {
+  return formatExportValue(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function normalizeFilename(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function buildReportTablesHtml(tables: Array<ExportTable<unknown>>, options: { title: string; description: string; generatedAt: string }) {
+  const renderedTables = tables
+    .map((table) => {
+      const bodyRows =
+        table.rows.length > 0
+          ? table.rows
+              .map(
+                (row) => `
+                  <tr>
+                    ${table.columns.map((column) => `<td>${escapeHtml(column.value(row))}</td>`).join("")}
+                  </tr>
+                `,
+              )
+              .join("")
+          : `<tr><td colspan="${table.columns.length}">No records available</td></tr>`;
+
+      return `
+        <section>
+          <h2>${escapeHtml(table.title)}</h2>
+          <table>
+            <thead>
+              <tr>${table.columns.map((column) => `<th>${escapeHtml(column.header)}</th>`).join("")}</tr>
+            </thead>
+            <tbody>${bodyRows}</tbody>
+          </table>
+        </section>
+      `;
+    })
+    .join("");
+
+  return `
+    <!doctype html>
+    <html>
+      <head>
+        <meta charset="utf-8" />
+        <title>${escapeHtml(options.title)}</title>
+        <style>
+          body { color: #13263a; font-family: Arial, sans-serif; margin: 28px; }
+          h1 { font-size: 24px; margin: 0 0 6px; }
+          h2 { font-size: 16px; margin: 24px 0 10px; }
+          p { color: #526171; margin: 0 0 6px; }
+          table { border-collapse: collapse; margin-bottom: 20px; width: 100%; }
+          th, td { border: 1px solid #d8dee7; font-size: 12px; padding: 8px; text-align: left; vertical-align: top; }
+          th { background: #edf2f7; color: #173a59; font-weight: 700; }
+          tr:nth-child(even) td { background: #fafafa; }
+          @media print {
+            body { margin: 14mm; }
+            section { break-inside: avoid; }
+          }
+        </style>
+      </head>
+      <body>
+        <h1>${escapeHtml(options.title)}</h1>
+        <p>${escapeHtml(options.description)}</p>
+        <p>Generated: ${escapeHtml(options.generatedAt)}</p>
+        ${renderedTables}
+      </body>
+    </html>
+  `;
+}
+
+function downloadFile(content: string, filename: string, type: string) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function toExportTable<T>(table: ExportTable<T>): ExportTable<unknown> {
+  return table as unknown as ExportTable<unknown>;
 }
 
 export default function ReportsPage() {
@@ -311,6 +425,217 @@ export default function ReportsPage() {
 
   const selectedReportMeta = reportCatalog.find((report) => report.id === selectedReport);
 
+  const selectedReportTables = useMemo<Array<ExportTable<unknown>>>(() => {
+    const projectNameById = new Map(projects.map((project) => [project.id, `${project.projectCode} - ${project.projectName}`]));
+
+    switch (selectedReport) {
+      case "project-summary":
+        return [
+          toExportTable<ProjectRecord>({
+            title: "Project Summary",
+            rows: projects,
+            columns: [
+              { header: "Code", value: (row) => row.projectCode },
+              { header: "Project", value: (row) => row.projectName },
+              { header: "Client", value: (row) => row.clientName },
+              { header: "Manager", value: (row) => row.projectManager },
+              { header: "Status", value: (row) => row.status },
+              { header: "Progress", value: (row) => `${row.progressPercent}%` },
+              { header: "Budget", value: (row) => row.budgetAmount },
+              { header: "Actual", value: (row) => row.actualAmount },
+            ],
+          }),
+        ];
+      case "wbs-cost":
+        return [
+          toExportTable<WbsRecord>({
+            title: "WBS Cost",
+            rows: wbsRecords,
+            columns: [
+              { header: "Project", value: (row) => projectNameById.get(row.projectId) ?? row.projectId },
+              { header: "WBS Code", value: (row) => row.wbsCode },
+              { header: "WBS Name", value: (row) => row.wbsName },
+              { header: "Level", value: (row) => row.levelNo },
+              { header: "Progress", value: (row) => `${row.progressPercent}%` },
+              { header: "Budget", value: (row) => row.budgetAmount },
+              { header: "Actual", value: (row) => row.actualAmount },
+            ],
+          }),
+        ];
+      case "activity-budget-vs-actual":
+        return [
+          toExportTable<ReportSnapshot>({
+            title: "Cost Trend",
+            rows: costSnapshots,
+            columns: [
+              { header: "Month", value: (row) => row.month },
+              { header: "Budget", value: (row) => row.budget },
+              { header: "Allocated", value: (row) => row.allocated },
+              { header: "Actual", value: (row) => row.actual },
+            ],
+          }),
+          toExportTable<ActivityItem>({
+            title: "Activity Budget vs Actual",
+            rows: activities,
+            columns: [
+              { header: "Activity", value: (row) => row.activityCode },
+              { header: "Name", value: (row) => row.activityName },
+              { header: "WBS", value: (row) => row.wbsCode },
+              { header: "Status", value: (row) => row.status },
+              { header: "Owner", value: (row) => row.responsibleUser },
+              { header: "Progress", value: (row) => `${row.progressPercent}%` },
+              { header: "Planned Start", value: (row) => row.plannedStart },
+              { header: "Planned End", value: (row) => row.plannedEnd },
+            ],
+          }),
+        ];
+      case "material-request-vs-receipt":
+        return [
+          toExportTable<MaterialRequestItem>({
+            title: "Material Request vs Receipt",
+            rows: materialRequests,
+            columns: [
+              { header: "Request No", value: (row) => row.requestNo },
+              { header: "Project", value: (row) => row.project },
+              { header: "Activity", value: (row) => row.activity },
+              { header: "Requested By", value: (row) => row.requestedBy },
+              { header: "Status", value: (row) => formatMaterialStatus(row.status) },
+              { header: "Requested", value: (row) => row.requestedQty },
+              { header: "Approved", value: (row) => row.approvedQty },
+              { header: "Pending", value: (row) => row.pendingQty },
+            ],
+          }),
+        ];
+      case "timesheet-utilization":
+        return [
+          toExportTable<{ id: string; entries: number; regularHours: string; overtimeHours: string }>({
+            title: "Timesheet Utilization Summary",
+            rows: [
+              {
+                id: "summary",
+                entries: timesheets.length,
+                regularHours: totalRegularHours.toFixed(2),
+                overtimeHours: totalOvertimeHours.toFixed(2),
+              },
+            ],
+            columns: [
+              { header: "Entries", value: (row) => row.entries },
+              { header: "Regular Hours", value: (row) => row.regularHours },
+              { header: "Overtime Hours", value: (row) => row.overtimeHours },
+            ],
+          }),
+          toExportTable<TimesheetRecord>({
+            title: "Timesheet Entries",
+            rows: timesheets,
+            columns: [
+              { header: "Employee Code", value: (row) => row.userCode },
+              { header: "Employee", value: (row) => row.employeeName },
+              { header: "Project", value: (row) => row.projectCode },
+              { header: "Activity", value: (row) => row.activityCode },
+              { header: "Work Date", value: (row) => row.workDate },
+              { header: "Regular Hrs", value: (row) => row.regularHours.toFixed(2) },
+              { header: "OT Hrs", value: (row) => row.overtimeHours.toFixed(2) },
+              { header: "Entry Type", value: (row) => (row.allocatedActivity ? "Allocated" : "Non-Allocated") },
+              { header: "Status", value: (row) => row.status },
+            ],
+          }),
+        ];
+      case "overhead-allocation":
+        return [
+          toExportTable<Record<string, never>>({
+            title: "Overhead Allocation",
+            rows: [],
+            columns: [
+              { header: "Period", value: () => "" },
+              { header: "Project", value: () => "" },
+              { header: "WBS", value: () => "" },
+              { header: "Activity", value: () => "" },
+              { header: "Basis", value: () => "" },
+              { header: "Allocated Amount", value: () => "" },
+              { header: "Posted", value: () => "" },
+            ],
+          }),
+        ];
+      case "milestone-tracking":
+        return [
+          toExportTable<MilestoneItem>({
+            title: "Milestone Tracking",
+            rows: milestones,
+            columns: [
+              { header: "Milestone", value: (row) => row.milestoneCode },
+              { header: "Name", value: (row) => row.milestoneName },
+              { header: "Planned", value: (row) => row.plannedDate },
+              { header: "Actual", value: (row) => row.actualDate },
+              { header: "Status", value: (row) => row.status },
+              { header: "WBS", value: (row) => row.wbsCode },
+            ],
+          }),
+        ];
+      case "risk-register":
+        return [
+          toExportTable<RiskItem>({
+            title: "Risk Register",
+            rows: risks,
+            columns: [
+              { header: "Risk No", value: (row) => row.riskNo },
+              { header: "Title", value: (row) => row.title },
+              { header: "Category", value: (row) => row.category },
+              { header: "Owner", value: (row) => row.owner },
+              { header: "Probability", value: (row) => row.probability },
+              { header: "Impact", value: (row) => row.impact },
+              { header: "Severity", value: (row) => row.severity },
+              { header: "Status", value: (row) => formatRiskStatus(row.status) },
+              { header: "Target", value: (row) => row.targetDate },
+            ],
+          }),
+        ];
+      case "progress-summary":
+        return [
+          toExportTable<ProjectRecord>({
+            title: "Progress Summary",
+            rows: projects,
+            columns: [
+              { header: "Code", value: (row) => row.projectCode },
+              { header: "Project", value: (row) => row.projectName },
+              { header: "Status", value: (row) => row.status },
+              { header: "Start", value: (row) => row.startDate },
+              { header: "End", value: (row) => row.endDate },
+              { header: "Progress", value: (row) => `${row.progressPercent}%` },
+            ],
+          }),
+        ];
+      default:
+        return [];
+    }
+  }, [activities, costSnapshots, materialRequests, milestones, projects, risks, selectedReport, timesheets, totalOvertimeHours, totalRegularHours, wbsRecords]);
+
+  function handleDownloadExcel() {
+    const title = selectedReportMeta?.name ?? "Report";
+    const description = selectedReportMeta?.description ?? "";
+    const generatedAt = new Date().toLocaleString();
+    const html = buildReportTablesHtml(selectedReportTables, { title, description, generatedAt });
+    downloadFile(html, `${normalizeFilename(title)}.xls`, "application/vnd.ms-excel;charset=utf-8");
+  }
+
+  function handlePrintPdf() {
+    const title = selectedReportMeta?.name ?? "Report";
+    const description = selectedReportMeta?.description ?? "";
+    const generatedAt = new Date().toLocaleString();
+    const html = buildReportTablesHtml(selectedReportTables, { title, description, generatedAt });
+    const printWindow = window.open("", "_blank", "noopener,noreferrer,width=1100,height=800");
+
+    if (!printWindow) {
+      window.print();
+      return;
+    }
+
+    printWindow.document.open();
+    printWindow.document.write(html);
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.setTimeout(() => printWindow.print(), 250);
+  }
+
   function renderReportPanel() {
     if (isLoading) {
       return <div className="rounded-[22px] border border-line bg-white/35 px-4 py-8 text-sm text-slate-600">Loading report data...</div>;
@@ -513,7 +838,27 @@ export default function ReportsPage() {
         </SectionCard>
 
         <SectionCard title={selectedReportMeta?.name ?? "Report data"} eyebrow="Preview">
-          <p className="mb-5 text-sm text-slate-600">{selectedReportMeta?.description ?? "Select a report from the menu."}</p>
+          <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <p className="text-sm text-slate-600">{selectedReportMeta?.description ?? "Select a report from the menu."}</p>
+            <div className="flex flex-wrap gap-2">
+              <button
+                className="rounded-full border border-line bg-white/70 px-4 py-2 text-sm font-semibold text-brand-strong shadow-sm transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={isLoading || !selectedReportMeta}
+                onClick={handleDownloadExcel}
+                type="button"
+              >
+                Download Excel
+              </button>
+              <button
+                className="rounded-full bg-brand-strong px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={isLoading || !selectedReportMeta}
+                onClick={handlePrintPdf}
+                type="button"
+              >
+                Print / Save PDF
+              </button>
+            </div>
+          </div>
           {renderReportPanel()}
         </SectionCard>
       </section>
