@@ -45,6 +45,13 @@ export const authApi = {
   refresh: (payload: { refreshToken: string }) => api.post("/auth/refresh", payload),
 };
 
+export const agentApi = {
+  chat: (payload: {
+    message: string;
+    history: Array<{ role: "user" | "assistant"; content: string }>;
+  }) => api.post("/agent/chat", payload),
+};
+
 export const userApi = {
   getUsers: () => api.get("/users"),
   createUser: (payload: {

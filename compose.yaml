@@ -1,0 +1,67 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: pms-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: projectmanagement
+      MYSQL_USER: pms_user
+      MYSQL_PASSWORD: pms_password
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  backend:
+    build:
+      context: ./backend
+    container_name: pms-backend
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env.properties
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/projectmanagement?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Kolkata
+      DB_USERNAME: pms_user
+      DB_PASSWORD: pms_password
+      JWT_SECRET: change-this-secret-before-sharing
+      APP_CORS_ALLOWED_ORIGIN_PATTERNS: http://localhost:3000
+      AGENT_PYTHON_URL: http://agent-python:8000
+    ports:
+      - "8080:8080"
+
+  agent-python:
+    build:
+      context: ./agent-python
+    container_name: pms-agent-python
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env.properties
+    environment:
+      BACKEND_API_BASE_URL: http://backend:8080/api
+    depends_on:
+      - backend
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_BASE_URL: http://localhost:8080/api
+    container_name: pms-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+
+volumes:
+  mysql_data:
