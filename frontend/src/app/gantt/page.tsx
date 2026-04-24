@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { SectionCard } from "@/components/common/section-card";
 import { AppShell } from "@/components/layout/app-shell";
 import { activityApi, milestoneApi, projectApi, wbsApi } from "@/lib/api";
@@ -11,6 +11,7 @@ import { useAppStore } from "@/store/app-store";
 type TimelineRow = {
   id: string;
   type: "wbs" | "activity";
+  sourceId?: string;
   code: string;
   name: string;
   status: string;
@@ -21,19 +22,40 @@ type TimelineRow = {
   level: number;
 };
 
-const dayMs = 24 * 60 * 60 * 1000;
+type ZoomMode = "day" | "month" | "year";
 
+type DragState = {
+  activityId: string;
+  mode: "move" | "resize-start" | "resize-end";
+  pointerStartX: number;
+  initialStartDate: string;
+  initialEndDate: string;
+};
+
+const dayMs = 24 * 60 * 60 * 1000;
 function parseDate(value: string) {
   const date = new Date(`${value}T00:00:00`);
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
-function formatShortDate(date: Date) {
-  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(date);
-}
-
 function formatMonth(date: Date) {
   return new Intl.DateTimeFormat("en-US", { month: "short", year: "numeric" }).format(date);
+}
+
+function formatYear(date: Date) {
+  return new Intl.DateTimeFormat("en-US", { year: "numeric" }).format(date);
+}
+
+function formatWeekday(date: Date) {
+  return new Intl.DateTimeFormat("en-US", { weekday: "short" }).format(date);
+}
+
+function formatMonthShort(date: Date) {
+  return new Intl.DateTimeFormat("en-US", { month: "short" }).format(date);
+}
+
+function formatFullDay(date: Date) {
+  return new Intl.DateTimeFormat("en-US", { weekday: "long", month: "short", day: "numeric", year: "numeric" }).format(date);
 }
 
 function daysBetween(start: Date, end: Date) {
@@ -42,6 +64,46 @@ function daysBetween(start: Date, end: Date) {
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
+}
+
+function addDays(date: Date, days: number) {
+  const next = new Date(date);
+  next.setDate(next.getDate() + days);
+  return next;
+}
+
+function toIsoDate(date: Date) {
+  return date.toISOString().slice(0, 10);
+}
+
+function startOfDay(date: Date) {
+  const next = new Date(date);
+  next.setHours(0, 0, 0, 0);
+  return next;
+}
+
+function startOfMonth(date: Date) {
+  const next = startOfDay(date);
+  next.setDate(1);
+  return next;
+}
+
+function startOfYear(date: Date) {
+  const next = startOfDay(date);
+  next.setMonth(0, 1);
+  return next;
+}
+
+function addMonths(date: Date, months: number) {
+  const next = new Date(date);
+  next.setMonth(next.getMonth() + months);
+  return next;
+}
+
+function addYears(date: Date, years: number) {
+  const next = new Date(date);
+  next.setFullYear(next.getFullYear() + years);
+  return next;
 }
 
 function statusTone(status: string) {
@@ -121,8 +183,12 @@ export default function GanttPage() {
   const [wbsRows, setWbsRows] = useState<WbsRecord[]>([]);
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [milestones, setMilestones] = useState<MilestoneItem[]>([]);
+  const [zoomMode, setZoomMode] = useState<ZoomMode>("month");
+  const [viewState, setViewState] = useState<{ projectId: string | null; date: Date } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [dragState, setDragState] = useState<DragState | null>(null);
 
   const selectedProject = projects.find((project) => project.id === selectedProjectId);
   const hasValidSelectedProject = Boolean(selectedProjectId) && !selectedProjectId.startsWith("p");
@@ -225,6 +291,7 @@ export default function GanttPage() {
       const wbsRow: TimelineRow = {
         id: `wbs-${wbs.id}`,
         type: "wbs",
+        sourceId: wbs.id,
         code: wbs.wbsCode,
         name: wbs.wbsName,
         status: "WBS",
@@ -237,6 +304,7 @@ export default function GanttPage() {
       const activityRows = wbsActivities.map((activity) => ({
         id: `activity-${activity.id}`,
         type: "activity" as const,
+        sourceId: activity.id,
         code: activity.activityCode,
         name: activity.activityName,
         status: activity.status,
@@ -251,62 +319,323 @@ export default function GanttPage() {
     });
   }, [activities, selectedProject?.endDate, selectedProject?.startDate, wbsRows]);
 
-  const timelineBounds = useMemo(() => {
-    const dates = [
-      selectedProject?.startDate,
-      selectedProject?.endDate,
-      ...timelineRows.flatMap((row) => [row.startDate, row.endDate]),
-      ...milestones.flatMap((milestone) => [milestone.plannedDate, milestone.actualDate ?? milestone.plannedDate]),
-    ]
-      .map((value) => (value ? parseDate(value) : null))
-      .filter((date): date is Date => Boolean(date));
+  const defaultViewDate = useMemo(
+    () =>
+      parseDate(selectedProject?.startDate ?? "") ??
+      timelineRows.map((row) => parseDate(row.startDate)).find((date): date is Date => Boolean(date)) ??
+      new Date(),
+    [selectedProject?.startDate, timelineRows],
+  );
 
-    const today = new Date();
-    const minDate = dates.length ? new Date(Math.min(...dates.map((date) => date.getTime()))) : today;
-    const maxDate = dates.length ? new Date(Math.max(...dates.map((date) => date.getTime()))) : today;
-    minDate.setDate(minDate.getDate() - 7);
-    maxDate.setDate(maxDate.getDate() + 7);
+  const currentViewDate = viewState?.projectId === selectedProjectId ? viewState.date : defaultViewDate;
 
+  const timelineConfig = useMemo(() => {
+    if (zoomMode === "day") {
+      return { columnWidth: 64, minWidth: 1536 };
+    }
+    if (zoomMode === "year") {
+      return { columnWidth: 110, minWidth: 1320 };
+    }
+    return { columnWidth: 40, minWidth: 1240 };
+  }, [zoomMode]);
+
+  const visibleRange = useMemo(() => {
+    if (zoomMode === "day") {
+      const start = startOfDay(currentViewDate);
+      const end = addDays(start, 1);
+      return {
+        start,
+        end,
+        title: formatFullDay(start),
+      };
+    }
+
+    if (zoomMode === "year") {
+      const start = startOfYear(currentViewDate);
+      const end = addYears(start, 1);
+      return {
+        start,
+        end,
+        title: formatYear(start),
+      };
+    }
+
+    const start = startOfMonth(currentViewDate);
+    const end = addMonths(start, 1);
     return {
-      start: minDate,
-      end: maxDate,
-      totalDays: daysBetween(minDate, maxDate),
+      start,
+      end,
+      title: formatMonth(start),
     };
-  }, [milestones, selectedProject?.endDate, selectedProject?.startDate, timelineRows]);
+  }, [currentViewDate, zoomMode]);
 
-  const monthMarkers = useMemo(() => {
-    const markers: Date[] = [];
-    const cursor = new Date(timelineBounds.start);
-    cursor.setDate(1);
-    if (cursor < timelineBounds.start) {
-      cursor.setMonth(cursor.getMonth() + 1);
+  const timelineColumns = useMemo(() => {
+    if (zoomMode === "day") {
+      return Array.from({ length: 24 }, (_, hour) => {
+        const start = new Date(visibleRange.start);
+        start.setHours(hour, 0, 0, 0);
+        const end = new Date(visibleRange.start);
+        end.setHours(hour + 1, 0, 0, 0);
+        return {
+          key: `hour-${hour}`,
+          start,
+          end,
+          majorLabel: formatFullDay(visibleRange.start),
+          minorTop: `${String(hour).padStart(2, "0")}:00`,
+          minorBottom: hour < 12 ? "AM" : "PM",
+          shaded: hour < 6 || hour >= 18,
+        };
+      });
     }
 
-    while (cursor <= timelineBounds.end) {
-      markers.push(new Date(cursor));
-      cursor.setMonth(cursor.getMonth() + 1);
+    if (zoomMode === "year") {
+      return Array.from({ length: 12 }, (_, monthOffset) => {
+        const start = addMonths(visibleRange.start, monthOffset);
+        const end = addMonths(visibleRange.start, monthOffset + 1);
+        return {
+          key: `month-${monthOffset}`,
+          start,
+          end,
+          majorLabel: formatYear(visibleRange.start),
+          minorTop: formatMonthShort(start),
+          minorBottom: formatYear(start),
+          shaded: monthOffset % 2 === 1,
+        };
+      });
     }
 
-    return markers;
-  }, [timelineBounds.end, timelineBounds.start]);
+    const totalDays = daysBetween(visibleRange.start, addDays(visibleRange.end, -1));
+    return Array.from({ length: totalDays }, (_, dayOffset) => {
+      const start = addDays(visibleRange.start, dayOffset);
+      const end = addDays(start, 1);
+      return {
+        key: `day-${dayOffset}`,
+        start,
+        end,
+        majorLabel: formatMonth(visibleRange.start),
+        minorTop: formatWeekday(start),
+        minorBottom: String(start.getDate()),
+        shaded: start.getDay() === 0 || start.getDay() === 6,
+      };
+    });
+  }, [visibleRange.end, visibleRange.start, zoomMode]);
 
-  function getPositionPercent(date: Date) {
-    return clamp(((date.getTime() - timelineBounds.start.getTime()) / (timelineBounds.totalDays * dayMs)) * 100, 0, 100);
+  const timelineWidth = useMemo(
+    () => Math.max(timelineConfig.minWidth, timelineColumns.length * timelineConfig.columnWidth),
+    [timelineColumns.length, timelineConfig.columnWidth, timelineConfig.minWidth],
+  );
+
+  const majorBands = useMemo(() => {
+    if (timelineColumns.length === 0) {
+      return [];
+    }
+
+    const bands: Array<{ key: string; label: string; left: number; width: number }> = [];
+    let currentLabel = timelineColumns[0].majorLabel;
+    let startIndex = 0;
+
+    for (let index = 1; index <= timelineColumns.length; index += 1) {
+      const nextLabel = timelineColumns[index]?.majorLabel;
+      if (index < timelineColumns.length && nextLabel === currentLabel) {
+        continue;
+      }
+
+      bands.push({
+        key: `${currentLabel}-${startIndex}`,
+        label: currentLabel,
+        left: startIndex * timelineConfig.columnWidth,
+        width: (index - startIndex) * timelineConfig.columnWidth,
+      });
+
+      currentLabel = nextLabel ?? "";
+      startIndex = index;
+    }
+
+    return bands;
+  }, [timelineColumns, timelineConfig.columnWidth]);
+
+  function getPositionPx(date: Date) {
+    const totalDuration = visibleRange.end.getTime() - visibleRange.start.getTime();
+    if (totalDuration <= 0) {
+      return 0;
+    }
+
+    const clampedTime = clamp(date.getTime(), visibleRange.start.getTime(), visibleRange.end.getTime());
+    return ((clampedTime - visibleRange.start.getTime()) / totalDuration) * timelineWidth;
+  }
+
+  function handlePrevious() {
+    setViewState((current) => {
+      const baseDate = current?.projectId === selectedProjectId ? current.date : defaultViewDate;
+      if (zoomMode === "day") {
+        return { projectId: selectedProjectId, date: addDays(baseDate, -1) };
+      }
+      if (zoomMode === "year") {
+        return { projectId: selectedProjectId, date: addYears(baseDate, -1) };
+      }
+      return { projectId: selectedProjectId, date: addMonths(baseDate, -1) };
+    });
+  }
+
+  function handleNext() {
+    setViewState((current) => {
+      const baseDate = current?.projectId === selectedProjectId ? current.date : defaultViewDate;
+      if (zoomMode === "day") {
+        return { projectId: selectedProjectId, date: addDays(baseDate, 1) };
+      }
+      if (zoomMode === "year") {
+        return { projectId: selectedProjectId, date: addYears(baseDate, 1) };
+      }
+      return { projectId: selectedProjectId, date: addMonths(baseDate, 1) };
+    });
   }
 
   function getBarStyle(row: TimelineRow) {
-    const start = parseDate(row.startDate) ?? timelineBounds.start;
+    const start = parseDate(row.startDate) ?? visibleRange.start;
     const end = parseDate(row.endDate) ?? start;
-    const left = getPositionPercent(start);
-    const right = getPositionPercent(end);
-    const width = Math.max(1.5, right - left);
-    return { left: `${left}%`, width: `${width}%` };
+    const left = getPositionPx(start);
+    const endExclusive = addDays(end, 1);
+    const width = Math.max(18, getPositionPx(endExclusive) - left);
+    return { left: `${left}px`, width: `${width}px` };
+  }
+
+  const persistActivityDates = useCallback(async (activityId: string, nextStartDate: string, nextEndDate: string) => {
+    const activity = activities.find((item) => item.id === activityId);
+    if (!activity || !selectedProjectId || selectedProjectId.startsWith("p")) {
+      return;
+    }
+
+    const nextDurationDays = daysBetween(parseDate(nextStartDate) ?? new Date(), parseDate(nextEndDate) ?? new Date());
+    const previousActivities = activities;
+    const updatedActivities = activities.map((item) =>
+      item.id === activityId
+        ? {
+            ...item,
+            plannedStart: nextStartDate,
+            plannedEnd: nextEndDate,
+            durationDays: nextDurationDays,
+          }
+        : item,
+    );
+
+    setActivities(updatedActivities);
+    setIsSaving(true);
+    setError(null);
+
+    try {
+      await activityApi.updateActivity(selectedProjectId, activityId, {
+        activityCode: activity.activityCode,
+        activityName: activity.activityName,
+        wbsId: Number(activity.wbsId),
+        plannedStart: nextStartDate,
+        plannedEnd: nextEndDate,
+        durationDays: nextDurationDays,
+        progressPercent: activity.progressPercent,
+        status: activity.status,
+        responsibleUser: activity.responsibleUser,
+      });
+    } catch (saveError: unknown) {
+      setActivities(previousActivities);
+      if (axios.isAxiosError(saveError) && typeof saveError.response?.data?.message === "string") {
+        setError(saveError.response.data.message);
+      } else {
+        setError("The activity schedule could not be updated from the Gantt chart.");
+      }
+    } finally {
+      setIsSaving(false);
+    }
+  }, [activities, selectedProjectId]);
+
+  useEffect(() => {
+    if (!dragState) {
+      return;
+    }
+
+    function handlePointerMove(event: MouseEvent) {
+      const deltaDays = Math.round((event.clientX - dragState.pointerStartX) / 48);
+      const initialStart = parseDate(dragState.initialStartDate);
+      const initialEnd = parseDate(dragState.initialEndDate);
+      if (!initialStart || !initialEnd) {
+        return;
+      }
+
+      let nextStart = initialStart;
+      let nextEnd = initialEnd;
+
+      if (dragState.mode === "move") {
+        nextStart = addDays(initialStart, deltaDays);
+        nextEnd = addDays(initialEnd, deltaDays);
+      } else if (dragState.mode === "resize-start") {
+        nextStart = addDays(initialStart, deltaDays);
+        if (nextStart > initialEnd) {
+          nextStart = initialEnd;
+        }
+      } else {
+        nextEnd = addDays(initialEnd, deltaDays);
+        if (nextEnd < initialStart) {
+          nextEnd = initialStart;
+        }
+      }
+
+      setActivities((current) =>
+        current.map((activity) =>
+          activity.id === dragState.activityId
+            ? {
+                ...activity,
+                plannedStart: toIsoDate(nextStart),
+                plannedEnd: toIsoDate(nextEnd),
+                durationDays: daysBetween(nextStart, nextEnd),
+              }
+            : activity,
+        ),
+      );
+    }
+
+    function handlePointerUp() {
+      const editedActivity = activities.find((activity) => activity.id === dragState.activityId);
+      const didChange =
+        editedActivity &&
+        (editedActivity.plannedStart !== dragState.initialStartDate || editedActivity.plannedEnd !== dragState.initialEndDate);
+
+      const finalStartDate = editedActivity?.plannedStart ?? dragState.initialStartDate;
+      const finalEndDate = editedActivity?.plannedEnd ?? dragState.initialEndDate;
+
+      setDragState(null);
+
+      if (didChange) {
+        void persistActivityDates(dragState.activityId, finalStartDate, finalEndDate);
+      }
+    }
+
+    window.addEventListener("mousemove", handlePointerMove);
+    window.addEventListener("mouseup", handlePointerUp);
+
+    return () => {
+      window.removeEventListener("mousemove", handlePointerMove);
+      window.removeEventListener("mouseup", handlePointerUp);
+    };
+  }, [activities, dragState, persistActivityDates]);
+
+  function startBarEdit(event: React.MouseEvent<HTMLDivElement>, row: TimelineRow, mode: DragState["mode"]) {
+    if (row.type !== "activity" || !row.sourceId || isSaving) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    setDragState({
+      activityId: row.sourceId,
+      mode,
+      pointerStartX: event.clientX,
+      initialStartDate: row.startDate,
+      initialEndDate: row.endDate,
+    });
   }
 
   return (
     <AppShell
       title="Gantt chart"
-      subtitle="Visualize the selected project's WBS, activities, milestones, dates, and progress in one timeline."
+      subtitle="Visualize the selected project's WBS, activities, milestones, dates, and progress in one timeline, then drag activity bars to reschedule directly."
     >
       {error ? <p className="rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</p> : null}
 
@@ -355,26 +684,98 @@ export default function GanttPage() {
             </div>
           ) : (
             <div className="overflow-hidden rounded-[24px] border border-line bg-white/40">
-              <div className="grid min-w-[980px] grid-cols-[320px_minmax(620px,1fr)] border-b border-line bg-white/70 text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
-                <div className="px-4 py-3">Task</div>
-                <div className="relative px-4 py-3">
-                  <div className="flex justify-between">
-                    <span>{formatShortDate(timelineBounds.start)}</span>
-                    <span>{formatShortDate(timelineBounds.end)}</span>
+              <div className="border-b border-line bg-white/70 px-4 py-3">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+                    Drag activity bars to move them. Drag the left or right edge to resize dates.
+                  </p>
+                  <p className="mt-1 text-xs text-slate-500">
+                    Day shows hours, month shows days, year shows months. Use previous and next to move the visible window.
+                  </p>
+                </div>
+
+                <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+                  <div className="inline-flex rounded-full border border-line bg-white/80 p-1">
+                    {(["day", "month", "year"] as ZoomMode[]).map((mode) => (
+                      <button
+                        className={`rounded-full px-3 py-1.5 text-sm font-semibold transition ${
+                          zoomMode === mode ? "bg-brand text-white" : "text-slate-600 hover:bg-slate-100"
+                        }`}
+                        key={mode}
+                        onClick={() => setZoomMode(mode)}
+                        type="button"
+                      >
+                        {mode[0].toUpperCase() + mode.slice(1)} view
+                      </button>
+                    ))}
                   </div>
-                  {monthMarkers.map((month) => (
-                    <span
-                      className="absolute top-3 -translate-x-1/2 rounded-full bg-white/80 px-2 text-[10px] text-slate-500"
-                      key={month.toISOString()}
-                      style={{ left: `${getPositionPercent(month)}%` }}
+
+                  <div className="inline-flex rounded-full border border-line bg-white/80 p-1">
+                    <button
+                      className="rounded-full px-3 py-1.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-100"
+                      onClick={handlePrevious}
+                      type="button"
                     >
-                      {formatMonth(month)}
-                    </span>
-                  ))}
+                      Prev
+                    </button>
+                    <div className="flex items-center px-3 text-sm font-semibold text-brand-strong">{visibleRange.title}</div>
+                    <button
+                      className="rounded-full px-3 py-1.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-100"
+                      onClick={handleNext}
+                      type="button"
+                    >
+                      Next
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              <div className="max-h-[620px] min-w-[980px] overflow-auto">
+              <div
+                className={`grid grid-cols-[320px_minmax(620px,1fr)] border-b border-line bg-white/70 text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 ${
+                  dragState ? "select-none" : ""
+                }`}
+              >
+                <div className="px-4 py-3">Task</div>
+                <div className="overflow-x-auto px-4 py-3">
+                  <div className="relative rounded-2xl border border-line/70 bg-white/75 shadow-[inset_0_1px_0_rgba(255,255,255,0.6)]" style={{ width: `${timelineWidth}px` }}>
+                    <div className="relative h-9 border-b border-line/70 bg-slate-50/80">
+                      {majorBands.map((band) => (
+                        <div
+                          className="absolute inset-y-0 flex items-center border-r border-line/70 px-3 text-[11px] font-semibold tracking-[0.14em] text-slate-500 uppercase"
+                          key={band.key}
+                          style={{ left: `${band.left}px`, width: `${band.width}px` }}
+                        >
+                          {band.label}
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="relative h-12">
+                      {timelineColumns.map((column, index) => {
+                        const left = index * timelineConfig.columnWidth;
+                        return (
+                          <div
+                            className={`absolute inset-y-0 border-r border-line/60 ${column.shaded ? "bg-amber-50/80" : "bg-white/80"}`}
+                            key={column.key}
+                            style={{ left: `${left}px`, width: `${timelineConfig.columnWidth}px` }}
+                          >
+                            <div className="flex h-full flex-col items-center justify-center">
+                              <span className="text-[10px] font-semibold tracking-[0.12em] text-slate-400 uppercase">
+                                {column.minorTop}
+                              </span>
+                              <span className="mt-1 text-xs font-semibold text-brand-strong">
+                                {column.minorBottom}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="max-h-[620px] overflow-auto">
                 {timelineRows.map((row) => (
                   <div
                     className={`grid grid-cols-[320px_minmax(620px,1fr)] border-b border-line last:border-b-0 ${row.type === "wbs" ? "bg-slate-50/80" : "bg-white/35"}`}
@@ -395,21 +796,48 @@ export default function GanttPage() {
                       </div>
                     </div>
 
-                    <div className="relative min-h-[62px] px-4 py-4">
-                      {monthMarkers.map((month) => (
-                        <span
-                          aria-hidden="true"
-                          className="absolute top-0 h-full border-l border-dashed border-slate-200"
-                          key={`${row.id}-${month.toISOString()}`}
-                          style={{ left: `${getPositionPercent(month)}%` }}
-                        />
-                      ))}
-                      <div
-                        className={`absolute top-1/2 h-4 -translate-y-1/2 rounded-full ${row.type === "wbs" ? "bg-brand-strong/75" : "bg-brand/55"}`}
-                        style={getBarStyle(row)}
-                        title={`${row.code}: ${row.startDate} to ${row.endDate}`}
-                      >
-                        <div className="h-full rounded-full bg-emerald-500/75" style={{ width: `${clamp(row.progressPercent, 0, 100)}%` }} />
+                    <div className="overflow-x-auto px-4 py-4">
+                      <div className="relative min-h-[62px] rounded-2xl border border-line/60 bg-white/40" style={{ width: `${timelineWidth}px` }}>
+                        {timelineColumns.map((column, index) => {
+                          return (
+                            <span
+                              aria-hidden="true"
+                              className={`absolute inset-y-0 border-r border-line/50 ${column.shaded ? "bg-amber-50/60" : "bg-white/10"}`}
+                              key={`${row.id}-${column.key}`}
+                              style={{ left: `${index * timelineConfig.columnWidth}px`, width: `${timelineConfig.columnWidth}px` }}
+                            />
+                          );
+                        })}
+                        <div
+                          className={`absolute top-1/2 h-4 -translate-y-1/2 rounded-full ${
+                            row.type === "wbs"
+                              ? "bg-brand-strong/75"
+                              : dragState?.activityId === row.sourceId
+                                ? "cursor-grabbing bg-brand"
+                                : "cursor-grab bg-brand/55"
+                          }`}
+                          onMouseDown={row.type === "activity" ? (event) => startBarEdit(event, row, "move") : undefined}
+                          style={getBarStyle(row)}
+                          title={
+                            row.type === "activity"
+                              ? `${row.code}: drag to move, drag edges to resize`
+                              : `${row.code}: ${row.startDate} to ${row.endDate}`
+                          }
+                        >
+                          <div className="h-full rounded-full bg-emerald-500/75" style={{ width: `${clamp(row.progressPercent, 0, 100)}%` }} />
+                          {row.type === "activity" ? (
+                            <>
+                              <span
+                                className="absolute left-0 top-1/2 h-6 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/80 bg-brand-strong shadow-sm"
+                                onMouseDown={(event) => startBarEdit(event, row, "resize-start")}
+                              />
+                              <span
+                                className="absolute right-0 top-1/2 h-6 w-2.5 translate-x-1/2 -translate-y-1/2 rounded-full border border-white/80 bg-brand-strong shadow-sm"
+                                onMouseDown={(event) => startBarEdit(event, row, "resize-end")}
+                              />
+                            </>
+                          ) : null}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -419,27 +847,41 @@ export default function GanttPage() {
                   <div className="grid grid-cols-[320px_minmax(620px,1fr)] bg-amber-50/50">
                     <div className="px-4 py-4">
                       <p className="font-semibold text-brand-strong">Milestones</p>
-                      <p className="mt-1 text-xs text-slate-500">Planned and actual dates</p>
+                      <p className="mt-1 text-xs text-slate-500">
+                        Planned and actual dates{isSaving ? " - saving schedule changes..." : ""}
+                      </p>
                     </div>
-                    <div className="relative min-h-[82px] px-4 py-4">
-                      {milestones.map((milestone) => {
-                        const plannedDate = parseDate(milestone.plannedDate);
-                        if (!plannedDate) {
-                          return null;
-                        }
+                    <div className="overflow-x-auto px-4 py-4">
+                      <div className="relative min-h-[82px] rounded-2xl border border-line/60 bg-white/40" style={{ width: `${timelineWidth}px` }}>
+                        {timelineColumns.map((column, index) => {
+                          return (
+                            <span
+                              aria-hidden="true"
+                              className={`absolute inset-y-0 border-r border-line/50 ${column.shaded ? "bg-amber-50/60" : "bg-white/10"}`}
+                              key={`milestone-${column.key}`}
+                              style={{ left: `${index * timelineConfig.columnWidth}px`, width: `${timelineConfig.columnWidth}px` }}
+                            />
+                          );
+                        })}
+                        {milestones.map((milestone) => {
+                          const plannedDate = parseDate(milestone.plannedDate);
+                          if (!plannedDate) {
+                            return null;
+                          }
 
-                        return (
-                          <div
-                            className="absolute top-4 -translate-x-1/2 text-center"
-                            key={milestone.id}
-                            style={{ left: `${getPositionPercent(plannedDate)}%` }}
-                            title={`${milestone.milestoneCode}: ${milestone.plannedDate}`}
-                          >
-                            <div className="mx-auto h-4 w-4 rotate-45 rounded-[4px] bg-highlight shadow-sm" />
-                            <p className="mt-2 max-w-[110px] truncate text-[11px] font-semibold text-brand-strong">{milestone.milestoneCode}</p>
-                          </div>
-                        );
-                      })}
+                          return (
+                            <div
+                              className="absolute top-4 -translate-x-1/2 text-center"
+                              key={milestone.id}
+                              style={{ left: `${getPositionPx(plannedDate)}px` }}
+                              title={`${milestone.milestoneCode}: ${milestone.plannedDate}`}
+                            >
+                              <div className="mx-auto h-4 w-4 rotate-45 rounded-[4px] bg-highlight shadow-sm" />
+                              <p className="mt-2 max-w-[110px] truncate text-[11px] font-semibold text-brand-strong">{milestone.milestoneCode}</p>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
                 ) : null}
