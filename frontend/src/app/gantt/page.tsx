@@ -551,10 +551,12 @@ export default function GanttPage() {
       return;
     }
 
+    const activeDrag = dragState;
+
     function handlePointerMove(event: MouseEvent) {
-      const deltaDays = Math.round((event.clientX - dragState.pointerStartX) / 48);
-      const initialStart = parseDate(dragState.initialStartDate);
-      const initialEnd = parseDate(dragState.initialEndDate);
+      const deltaDays = Math.round((event.clientX - activeDrag.pointerStartX) / 48);
+      const initialStart = parseDate(activeDrag.initialStartDate);
+      const initialEnd = parseDate(activeDrag.initialEndDate);
       if (!initialStart || !initialEnd) {
         return;
       }
@@ -562,10 +564,10 @@ export default function GanttPage() {
       let nextStart = initialStart;
       let nextEnd = initialEnd;
 
-      if (dragState.mode === "move") {
+      if (activeDrag.mode === "move") {
         nextStart = addDays(initialStart, deltaDays);
         nextEnd = addDays(initialEnd, deltaDays);
-      } else if (dragState.mode === "resize-start") {
+      } else if (activeDrag.mode === "resize-start") {
         nextStart = addDays(initialStart, deltaDays);
         if (nextStart > initialEnd) {
           nextStart = initialEnd;
@@ -579,7 +581,7 @@ export default function GanttPage() {
 
       setActivities((current) =>
         current.map((activity) =>
-          activity.id === dragState.activityId
+          activity.id === activeDrag.activityId
             ? {
                 ...activity,
                 plannedStart: toIsoDate(nextStart),
@@ -592,18 +594,18 @@ export default function GanttPage() {
     }
 
     function handlePointerUp() {
-      const editedActivity = activities.find((activity) => activity.id === dragState.activityId);
+      const editedActivity = activities.find((activity) => activity.id === activeDrag.activityId);
       const didChange =
         editedActivity &&
-        (editedActivity.plannedStart !== dragState.initialStartDate || editedActivity.plannedEnd !== dragState.initialEndDate);
+        (editedActivity.plannedStart !== activeDrag.initialStartDate || editedActivity.plannedEnd !== activeDrag.initialEndDate);
 
-      const finalStartDate = editedActivity?.plannedStart ?? dragState.initialStartDate;
-      const finalEndDate = editedActivity?.plannedEnd ?? dragState.initialEndDate;
+      const finalStartDate = editedActivity?.plannedStart ?? activeDrag.initialStartDate;
+      const finalEndDate = editedActivity?.plannedEnd ?? activeDrag.initialEndDate;
 
       setDragState(null);
 
       if (didChange) {
-        void persistActivityDates(dragState.activityId, finalStartDate, finalEndDate);
+        void persistActivityDates(activeDrag.activityId, finalStartDate, finalEndDate);
       }
     }
 
