@@ -52,6 +52,7 @@ body {
   font-family: var(--font-manrope), sans-serif;
   min-height: 100vh;
   letter-spacing: -0.01em;
+  overflow-x: hidden;
 }
 
 a {
@@ -100,6 +101,13 @@ a {
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(23, 58, 89, 0.42);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
 }
 
 .status-dot {

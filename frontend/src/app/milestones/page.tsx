@@ -4,6 +4,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { DataTable } from "@/components/common/data-table";
 import { SectionCard } from "@/components/common/section-card";
+import { SidebarDrawer } from "@/components/common/sidebar-drawer";
 import { AppShell } from "@/components/layout/app-shell";
 import { MilestoneForm, type MilestoneFormValues } from "@/components/milestones/milestone-form";
 import { milestoneApi, projectApi, wbsApi } from "@/lib/api";
@@ -309,21 +310,13 @@ export default function MilestonesPage() {
         )}
       </SectionCard>
 
-      {isModalOpen ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/35 p-4">
-          <div className="w-full max-w-3xl rounded-[28px] border border-white/60 bg-[#f8f5ef] p-6 shadow-[0_30px_80px_rgba(15,23,42,0.18)]">
-            <div className="mb-6 flex items-start justify-between gap-4">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-strong/70">
-                  {editingMilestone ? "Update milestone" : "Create milestone"}
-                </p>
-                <h2 className="mt-2 font-display text-2xl text-slate-900">{editingMilestone ? "Edit milestone" : "New milestone"}</h2>
-              </div>
-              <button className="text-sm font-semibold text-slate-600" onClick={closeModal} type="button">
-                Close
-              </button>
-            </div>
-
+      <SidebarDrawer
+        eyebrow={editingMilestone ? "Update milestone" : "Create milestone"}
+        onClose={closeModal}
+        open={isModalOpen}
+        title={editingMilestone ? "Edit milestone" : "New milestone"}
+        widthClassName="sm:max-w-3xl"
+      >
             <MilestoneForm
               error={formError}
               initialValues={
@@ -344,9 +337,7 @@ export default function MilestonesPage() {
               submitLabel={editingMilestone ? "Save Changes" : "Save Milestone"}
               wbsOptions={wbsOptions}
             />
-          </div>
-        </div>
-      ) : null}
+      </SidebarDrawer>
     </AppShell>
   );
 }

@@ -5,6 +5,7 @@ import { jsPDF } from "jspdf";
 import { useEffect, useMemo, useState } from "react";
 import { DataTable } from "@/components/common/data-table";
 import { SectionCard } from "@/components/common/section-card";
+import { SidebarDrawer } from "@/components/common/sidebar-drawer";
 import { AppShell } from "@/components/layout/app-shell";
 import { BillingForm, type BillingFormValues } from "@/components/billing/billing-form";
 import { billingApi, milestoneApi, projectApi } from "@/lib/api";
@@ -588,21 +589,13 @@ export default function BillingPage() {
         )}
       </SectionCard>
 
-      {isModalOpen ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/35 p-4">
-          <div className="w-full max-w-3xl rounded-[28px] border border-white/60 bg-[#f8f5ef] p-6 shadow-[0_30px_80px_rgba(15,23,42,0.18)]">
-            <div className="mb-6 flex items-start justify-between gap-4">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-strong/70">
-                  {editingBilling ? "Update billing" : "Create billing"}
-                </p>
-                <h2 className="mt-2 font-display text-2xl text-slate-900">{editingBilling ? "Edit billing" : "New billing"}</h2>
-              </div>
-              <button className="text-sm font-semibold text-slate-600" onClick={closeModal} type="button">
-                Close
-              </button>
-            </div>
-
+      <SidebarDrawer
+        eyebrow={editingBilling ? "Update billing" : "Create billing"}
+        onClose={closeModal}
+        open={isModalOpen}
+        title={editingBilling ? "Edit billing" : "New billing"}
+        widthClassName="sm:max-w-3xl"
+      >
             <BillingForm
               error={formError}
               initialValues={
@@ -624,24 +617,16 @@ export default function BillingPage() {
               onSubmit={handleSaveBilling}
               submitLabel={editingBilling ? "Save Changes" : "Save Billing"}
             />
-          </div>
-        </div>
-      ) : null}
+      </SidebarDrawer>
 
-      {receiptBilling ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/35 p-4 print:hidden">
-          <div className="w-full max-w-3xl rounded-[28px] border border-white/60 bg-[#f8f5ef] p-6 shadow-[0_30px_80px_rgba(15,23,42,0.18)]">
-            <div className="mb-6 flex items-start justify-between gap-4">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-strong/70">Billing receipt</p>
-                <h2 className="mt-2 font-display text-2xl text-slate-900">{receiptBilling.billingNo}</h2>
-                <p className="mt-2 text-sm text-slate-600">Receipt view for this billing entry. You can print it or export it to PDF.</p>
-              </div>
-              <button className="text-sm font-semibold text-slate-600" onClick={closeReceiptModal} type="button">
-                Close
-              </button>
-            </div>
-
+      <SidebarDrawer
+        description="Receipt view for this billing entry. You can print it or export it to PDF."
+        eyebrow="Billing receipt"
+        onClose={closeReceiptModal}
+        open={Boolean(receiptBilling)}
+        title={receiptBilling?.billingNo ?? "Billing receipt"}
+        widthClassName="sm:max-w-3xl"
+      >
             <div className="rounded-[24px] border border-line bg-white/75 p-6">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Project Management and Cost Control System</p>
               <h3 className="mt-2 display-font text-3xl font-semibold text-brand-strong">Billing Receipt</h3>
@@ -707,9 +692,7 @@ export default function BillingPage() {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      ) : null}
+      </SidebarDrawer>
     </AppShell>
   );
 }

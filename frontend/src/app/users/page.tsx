@@ -4,6 +4,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { DataTable } from "@/components/common/data-table";
 import { SectionCard } from "@/components/common/section-card";
+import { SidebarDrawer } from "@/components/common/sidebar-drawer";
 import { AppShell } from "@/components/layout/app-shell";
 import { UserForm, type UserFormValues } from "@/components/users/user-form";
 import { useIsClient } from "@/hooks/use-is-client";
@@ -277,23 +278,13 @@ export default function UsersPage() {
         )}
       </SectionCard>
 
-      {isModalOpen ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/35 px-4 py-8">
-          <div className="panel w-full max-w-3xl rounded-[32px] p-6 shadow-2xl shadow-slate-900/20">
-            <div className="mb-5 flex items-start justify-between gap-4">
-              <div>
-                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.24em] text-brand">
-                  {editingUser ? "Edit User" : "New User"}
-                </p>
-                <h2 className="display-font text-2xl font-semibold text-brand-strong">
-                  {editingUser ? editingUser.fullName : "Create a new system user"}
-                </h2>
-              </div>
-              <button className="text-sm font-semibold text-slate-600" onClick={closeModal} type="button">
-                Close
-              </button>
-            </div>
-
+      <SidebarDrawer
+        eyebrow={editingUser ? "Edit User" : "New User"}
+        onClose={closeModal}
+        open={isModalOpen}
+        title={editingUser ? editingUser.fullName : "Create a new system user"}
+        widthClassName="sm:max-w-3xl"
+      >
             <UserForm
               error={formError}
               initialValues={
@@ -314,25 +305,15 @@ export default function UsersPage() {
               onSubmit={handleSave}
               submitLabel={editingUser ? "Update User" : "Create User"}
             />
-          </div>
-        </div>
-      ) : null}
+      </SidebarDrawer>
 
-      {isResetCodeModalOpen ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/35 px-4 py-8">
-          <div className="panel w-full max-w-2xl rounded-[32px] p-6 shadow-2xl shadow-slate-900/20">
-            <div className="mb-5 flex items-start justify-between gap-4">
-              <div>
-                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.24em] text-brand">Reset Code</p>
-                <h2 className="display-font text-2xl font-semibold text-brand-strong">
-                  {selectedResetCode?.fullName ?? "Password reset code"}
-                </h2>
-              </div>
-              <button className="text-sm font-semibold text-slate-600" onClick={closeResetCodeModal} type="button">
-                Close
-              </button>
-            </div>
-
+      <SidebarDrawer
+        eyebrow="Reset Code"
+        onClose={closeResetCodeModal}
+        open={isResetCodeModalOpen}
+        title={selectedResetCode?.fullName ?? "Password reset code"}
+        widthClassName="sm:max-w-2xl"
+      >
             {isLoadingResetCode ? (
               <div className="rounded-[22px] border border-line bg-white/35 px-4 py-8 text-sm text-slate-600">Loading reset code...</div>
             ) : resetCodeError ? (
@@ -365,9 +346,7 @@ export default function UsersPage() {
                 </div>
               </div>
             ) : null}
-          </div>
-        </div>
-      ) : null}
+      </SidebarDrawer>
     </AppShell>
   );
 }

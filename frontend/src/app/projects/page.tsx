@@ -4,6 +4,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { DataTable } from "@/components/common/data-table";
 import { SectionCard } from "@/components/common/section-card";
+import { SidebarDrawer } from "@/components/common/sidebar-drawer";
 import { AppShell } from "@/components/layout/app-shell";
 import { ProjectForm, type ProjectFormValues } from "@/components/projects/project-form";
 import { projectApi } from "@/lib/api";
@@ -229,32 +230,18 @@ export default function ProjectsPage() {
         )}
       </SectionCard>
 
-      {isModalOpen ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/35 px-4 py-8">
-          <div className="panel w-full max-w-3xl rounded-[32px] p-6 shadow-2xl shadow-slate-900/20">
-            <div className="mb-5 flex items-start justify-between gap-4">
-              <div>
-                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.24em] text-brand">
-                  {editingProject ? "Edit Project" : "New Project"}
-                </p>
-                <h2 className="display-font text-2xl font-semibold text-brand-strong">
-                  {editingProject ? "Update project details" : "Add project details"}
-                </h2>
-                <p className="mt-2 text-sm text-slate-600">
-                  {editingProject
-                    ? "Update the project and save the changes directly to the database."
-                    : "Save a new project directly to the database and refresh the register immediately."}
-                </p>
-              </div>
-              <button
-                className="rounded-full border border-line bg-white/70 px-4 py-2 text-sm font-semibold text-slate-700"
-                onClick={closeModal}
-                type="button"
-              >
-                Close
-              </button>
-            </div>
-
+      <SidebarDrawer
+        description={
+          editingProject
+            ? "Update the project and save the changes directly to the database."
+            : "Save a new project directly to the database and refresh the register immediately."
+        }
+        eyebrow={editingProject ? "Edit Project" : "New Project"}
+        onClose={closeModal}
+        open={isModalOpen}
+        title={editingProject ? "Update project details" : "Add project details"}
+        widthClassName="sm:max-w-3xl"
+      >
             <ProjectForm
               error={formError}
               initialValues={
@@ -275,9 +262,7 @@ export default function ProjectsPage() {
               onSubmit={handleCreateProject}
               submitLabel={editingProject ? "Update Project" : "Save Project"}
             />
-          </div>
-        </div>
-      ) : null}
+      </SidebarDrawer>
     </AppShell>
   );
 }

@@ -4,6 +4,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { DataTable } from "@/components/common/data-table";
 import { SectionCard } from "@/components/common/section-card";
+import { SidebarDrawer } from "@/components/common/sidebar-drawer";
 import { AppShell } from "@/components/layout/app-shell";
 import {
   MaterialRequestForm,
@@ -272,32 +273,18 @@ export default function MaterialRequestsPage() {
         )}
       </SectionCard>
 
-      {isModalOpen ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/35 px-4 py-8">
-          <div className="panel w-full max-w-3xl rounded-[32px] p-6 shadow-2xl shadow-slate-900/20">
-            <div className="mb-5 flex items-start justify-between gap-4">
-              <div>
-                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.24em] text-brand">
-                  {editingRequest ? "Edit Material Request" : "New Material Request"}
-                </p>
-                <h2 className="display-font text-2xl font-semibold text-brand-strong">
-                  {editingRequest ? "Update request details" : "Add request details"}
-                </h2>
-                <p className="mt-2 text-sm text-slate-600">
-                  {editingRequest
-                    ? "Update the material request and save the changes directly to the database."
-                    : "Create a new material request and save it directly to the database."}
-                </p>
-              </div>
-              <button
-                className="rounded-full border border-line bg-white/70 px-4 py-2 text-sm font-semibold text-slate-700"
-                onClick={closeModal}
-                type="button"
-              >
-                Close
-              </button>
-            </div>
-
+      <SidebarDrawer
+        description={
+          editingRequest
+            ? "Update the material request and save the changes directly to the database."
+            : "Create a new material request and save it directly to the database."
+        }
+        eyebrow={editingRequest ? "Edit Material Request" : "New Material Request"}
+        onClose={closeModal}
+        open={isModalOpen}
+        title={editingRequest ? "Update request details" : "Add request details"}
+        widthClassName="sm:max-w-3xl"
+      >
             <MaterialRequestForm
               activityOptions={activityOptions}
               error={formError}
@@ -323,9 +310,7 @@ export default function MaterialRequestsPage() {
               projectOptions={projectOptions}
               submitLabel={editingRequest ? "Update Request" : "Save Request"}
             />
-          </div>
-        </div>
-      ) : null}
+      </SidebarDrawer>
     </AppShell>
   );
 }

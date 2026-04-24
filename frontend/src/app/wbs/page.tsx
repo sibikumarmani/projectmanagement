@@ -4,6 +4,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { DataTable } from "@/components/common/data-table";
 import { SectionCard } from "@/components/common/section-card";
+import { SidebarDrawer } from "@/components/common/sidebar-drawer";
 import { AppShell } from "@/components/layout/app-shell";
 import { WbsForm, type WbsFormValues } from "@/components/wbs/wbs-form";
 import { projectApi, wbsApi } from "@/lib/api";
@@ -257,32 +258,18 @@ export default function WbsPage() {
         )}
       </SectionCard>
 
-      {isModalOpen ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/35 px-4 py-8">
-          <div className="panel w-full max-w-3xl rounded-[32px] p-6 shadow-2xl shadow-slate-900/20">
-            <div className="mb-5 flex items-start justify-between gap-4">
-              <div>
-                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.24em] text-brand">
-                  {editingWbs ? "Edit WBS" : "New WBS"}
-                </p>
-                <h2 className="display-font text-2xl font-semibold text-brand-strong">
-                  {editingWbs ? "Update WBS details" : "Add WBS details"}
-                </h2>
-                <p className="mt-2 text-sm text-slate-600">
-                  {editingWbs
-                    ? "Update the selected WBS and save the changes to the database."
-                    : "Create a new WBS row under the selected project and save it to the database."}
-                </p>
-              </div>
-              <button
-                className="rounded-full border border-line bg-white/70 px-4 py-2 text-sm font-semibold text-slate-700"
-                onClick={closeModal}
-                type="button"
-              >
-                Close
-              </button>
-            </div>
-
+      <SidebarDrawer
+        description={
+          editingWbs
+            ? "Update the selected WBS and save the changes to the database."
+            : "Create a new WBS row under the selected project and save it to the database."
+        }
+        eyebrow={editingWbs ? "Edit WBS" : "New WBS"}
+        onClose={closeModal}
+        open={isModalOpen}
+        title={editingWbs ? "Update WBS details" : "Add WBS details"}
+        widthClassName="sm:max-w-3xl"
+      >
             <WbsForm
               error={formError}
               initialValues={
@@ -302,9 +289,7 @@ export default function WbsPage() {
               onSubmit={handleSaveWbs}
               submitLabel={editingWbs ? "Update WBS" : "Save WBS"}
             />
-          </div>
-        </div>
-      ) : null}
+      </SidebarDrawer>
     </AppShell>
   );
 }

@@ -660,7 +660,7 @@ export default function GanttPage() {
               </select>
             </label>
 
-            <div className="grid grid-cols-3 gap-2 text-center">
+            <div className="grid grid-cols-1 gap-2 text-center sm:grid-cols-3">
               <div className="rounded-2xl border border-line bg-white/50 px-4 py-3">
                 <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">WBS</p>
                 <p className="mt-1 text-xl font-semibold text-brand-strong">{wbsRows.length}</p>
@@ -696,8 +696,8 @@ export default function GanttPage() {
                   </p>
                 </div>
 
-                <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-                  <div className="inline-flex rounded-full border border-line bg-white/80 p-1">
+                <div className="mt-3 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                  <div className="inline-flex flex-wrap rounded-full border border-line bg-white/80 p-1">
                     {(["day", "month", "year"] as ZoomMode[]).map((mode) => (
                       <button
                         className={`rounded-full px-3 py-1.5 text-sm font-semibold transition ${
@@ -712,7 +712,7 @@ export default function GanttPage() {
                     ))}
                   </div>
 
-                  <div className="inline-flex rounded-full border border-line bg-white/80 p-1">
+                  <div className="inline-flex flex-wrap items-center rounded-full border border-line bg-white/80 p-1">
                     <button
                       className="rounded-full px-3 py-1.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-100"
                       onClick={handlePrevious}
@@ -733,7 +733,7 @@ export default function GanttPage() {
               </div>
 
               <div
-                className={`grid grid-cols-[320px_minmax(620px,1fr)] border-b border-line bg-white/70 text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 ${
+                className={`grid min-w-[980px] grid-cols-[280px_minmax(620px,1fr)] border-b border-line bg-white/70 text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 sm:grid-cols-[320px_minmax(620px,1fr)] ${
                   dragState ? "select-none" : ""
                 }`}
               >
@@ -780,7 +780,7 @@ export default function GanttPage() {
               <div className="max-h-[620px] overflow-auto">
                 {timelineRows.map((row) => (
                   <div
-                    className={`grid grid-cols-[320px_minmax(620px,1fr)] border-b border-line last:border-b-0 ${row.type === "wbs" ? "bg-slate-50/80" : "bg-white/35"}`}
+                    className={`grid min-w-[980px] grid-cols-[280px_minmax(620px,1fr)] border-b border-line last:border-b-0 sm:grid-cols-[320px_minmax(620px,1fr)] ${row.type === "wbs" ? "bg-slate-50/80" : "bg-white/35"}`}
                     key={row.id}
                   >
                     <div className="px-4 py-3">
@@ -846,7 +846,7 @@ export default function GanttPage() {
                 ))}
 
                 {milestones.length > 0 ? (
-                  <div className="grid grid-cols-[320px_minmax(620px,1fr)] bg-amber-50/50">
+                  <div className="grid min-w-[980px] grid-cols-[280px_minmax(620px,1fr)] bg-amber-50/50 sm:grid-cols-[320px_minmax(620px,1fr)]">
                     <div className="px-4 py-4">
                       <p className="font-semibold text-brand-strong">Milestones</p>
                       <p className="mt-1 text-xs text-slate-500">

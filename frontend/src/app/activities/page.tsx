@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { ActivityForm, type ActivityFormValues } from "@/components/activities/activity-form";
 import { DataTable } from "@/components/common/data-table";
 import { SectionCard } from "@/components/common/section-card";
+import { SidebarDrawer } from "@/components/common/sidebar-drawer";
 import { AppShell } from "@/components/layout/app-shell";
 import { activityApi, projectApi, wbsApi } from "@/lib/api";
 import type { ActivityItem, ProjectRecord, WbsRecord } from "@/lib/types";
@@ -316,21 +317,13 @@ export default function ActivitiesPage() {
         )}
       </SectionCard>
 
-      {isModalOpen ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/35 p-4">
-          <div className="w-full max-w-3xl rounded-[28px] border border-white/60 bg-[#f8f5ef] p-6 shadow-[0_30px_80px_rgba(15,23,42,0.18)]">
-            <div className="mb-6 flex items-start justify-between gap-4">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-strong/70">
-                  {editingActivity ? "Update activity" : "Create activity"}
-                </p>
-                <h2 className="mt-2 font-display text-2xl text-slate-900">{editingActivity ? "Edit activity" : "New activity"}</h2>
-              </div>
-              <button className="text-sm font-semibold text-slate-600" onClick={closeModal} type="button">
-                Close
-              </button>
-            </div>
-
+      <SidebarDrawer
+        eyebrow={editingActivity ? "Update activity" : "Create activity"}
+        onClose={closeModal}
+        open={isModalOpen}
+        title={editingActivity ? "Edit activity" : "New activity"}
+        widthClassName="sm:max-w-3xl"
+      >
             <ActivityForm
               error={formError}
               initialValues={
@@ -354,9 +347,7 @@ export default function ActivitiesPage() {
               submitLabel={editingActivity ? "Save Changes" : "Save Activity"}
               wbsOptions={wbsOptions}
             />
-          </div>
-        </div>
-      ) : null}
+      </SidebarDrawer>
     </AppShell>
   );
 }

@@ -4,6 +4,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { DataTable } from "@/components/common/data-table";
 import { SectionCard } from "@/components/common/section-card";
+import { SidebarDrawer } from "@/components/common/sidebar-drawer";
 import { AppShell } from "@/components/layout/app-shell";
 import { RiskForm, type RiskFormValues } from "@/components/risks/risk-form";
 import { activityApi, projectApi, riskApi } from "@/lib/api";
@@ -260,32 +261,18 @@ export default function RisksPage() {
         )}
       </SectionCard>
 
-      {isModalOpen ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/35 px-4 py-8">
-          <div className="panel w-full max-w-4xl rounded-[32px] p-6 shadow-2xl shadow-slate-900/20">
-            <div className="mb-5 flex items-start justify-between gap-4">
-              <div>
-                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.24em] text-brand">
-                  {editingRisk ? "Edit Risk" : "New Risk"}
-                </p>
-                <h2 className="display-font text-2xl font-semibold text-brand-strong">
-                  {editingRisk ? "Update risk details" : "Add risk details"}
-                </h2>
-                <p className="mt-2 text-sm text-slate-600">
-                  {editingRisk
-                    ? "Update the risk and save the changes directly to the database."
-                    : "Create a new risk and save it directly to the database."}
-                </p>
-              </div>
-              <button
-                className="rounded-full border border-line bg-white/70 px-4 py-2 text-sm font-semibold text-slate-700"
-                onClick={closeModal}
-                type="button"
-              >
-                Close
-              </button>
-            </div>
-
+      <SidebarDrawer
+        description={
+          editingRisk
+            ? "Update the risk and save the changes directly to the database."
+            : "Create a new risk and save it directly to the database."
+        }
+        eyebrow={editingRisk ? "Edit Risk" : "New Risk"}
+        onClose={closeModal}
+        open={isModalOpen}
+        title={editingRisk ? "Update risk details" : "Add risk details"}
+        widthClassName="sm:max-w-4xl"
+      >
             <RiskForm
               activityOptions={activityOptions}
               error={formError}
@@ -314,9 +301,7 @@ export default function RisksPage() {
               projectOptions={projectOptions}
               submitLabel={editingRisk ? "Update Risk" : "Save Risk"}
             />
-          </div>
-        </div>
-      ) : null}
+      </SidebarDrawer>
     </AppShell>
   );
 }
