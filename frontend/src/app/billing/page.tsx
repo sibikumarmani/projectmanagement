@@ -627,7 +627,8 @@ export default function BillingPage() {
         title={receiptBilling?.billingNo ?? "Billing receipt"}
         widthClassName="sm:max-w-3xl"
       >
-            <div className="rounded-[24px] border border-line bg-white/75 p-6">
+        {receiptBilling ? (
+          <div className="rounded-[24px] border border-line bg-white/75 p-6">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Project Management and Cost Control System</p>
               <h3 className="mt-2 display-font text-3xl font-semibold text-brand-strong">Billing Receipt</h3>
               <p className="mt-2 text-sm text-slate-600">Milestone-level billing receipt generated from the selected project.</p>
@@ -691,7 +692,8 @@ export default function BillingPage() {
                   </button>
                 </div>
               </div>
-            </div>
+          </div>
+        ) : null}
       </SidebarDrawer>
     </AppShell>
   );
