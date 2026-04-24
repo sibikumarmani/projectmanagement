@@ -618,7 +618,7 @@ export default function GanttPage() {
     };
   }, [activities, dragState, persistActivityDates]);
 
-  function startBarEdit(event: React.MouseEvent<HTMLDivElement>, row: TimelineRow, mode: DragState["mode"]) {
+  function startBarEdit(event: React.MouseEvent<HTMLElement>, row: TimelineRow, mode: DragState["mode"]) {
     if (row.type !== "activity" || !row.sourceId || isSaving) {
       return;
     }
