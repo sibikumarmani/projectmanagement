@@ -8,6 +8,8 @@ public interface WbsRepository extends JpaRepository<WbsEntity, Long> {
 
     List<WbsEntity> findByProjectIdOrderByWbsCodeAsc(Long projectId);
 
+    List<WbsEntity> findByProjectId(Long projectId);
+
     boolean existsByProjectIdAndWbsCodeIgnoreCase(Long projectId, String wbsCode);
 
     boolean existsByProjectIdAndWbsCodeIgnoreCaseAndIdNot(Long projectId, String wbsCode, Long id);

@@ -187,9 +187,9 @@ export default function LoginPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center px-4 py-10">
-      <div className="panel w-full max-w-5xl overflow-hidden rounded-[32px]">
+      <div className="w-full max-w-5xl overflow-hidden rounded-none border border-white/70 bg-white/88 shadow-[0_28px_70px_rgba(24,50,71,0.14)] backdrop-blur">
         <div className="grid lg:grid-cols-[0.95fr_1.05fr]">
-          <section className="bg-brand-strong px-8 py-10 text-white">
+          <section className="topbar-shade px-8 py-10 text-white">
             <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-white/70">Secure Access</p>
             <h1 className="display-font text-4xl font-semibold">PMS Login</h1>
             <p className="mt-4 max-w-md text-sm leading-7 text-white/80">
@@ -229,13 +229,13 @@ export default function LoginPage() {
             </div>
           </section>
 
-          <section className="px-8 py-10">
-            <div className="mb-6 flex gap-2 rounded-full bg-white/60 p-1 text-sm font-semibold text-slate-600">
+          <section className="bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(244,249,250,0.92))] px-8 py-10">
+            <div className="mb-6 flex gap-2 rounded-full bg-[#eaf4f7] p-1 text-sm font-semibold text-slate-600">
               {(["login", "register", ...(pendingEmail ? ["verify"] : []), ...(view === "forgot" ? ["forgot"] : [])] as AuthView[]).map((tab) => (
                 <button
                   key={tab}
                   className={`rounded-full px-4 py-2 transition ${
-                    view === tab ? "bg-brand-strong text-white" : "text-slate-600"
+                    view === tab ? "topbar-shade text-white" : "text-slate-600"
                   }`}
                   onClick={() => {
                     resetMessages();
@@ -294,20 +294,20 @@ export default function LoginPage() {
                   }
                 })}
               >
-                <input className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3" placeholder="Email" {...loginForm.register("email")} />
+                <input className="w-full rounded-2xl border border-line bg-white px-4 py-3" placeholder="Email" {...loginForm.register("email")} />
                 <p className="-mt-2 text-xs text-rose-600">{loginForm.formState.errors.email?.message}</p>
                 <input
-                  className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3"
+                  className="w-full rounded-2xl border border-line bg-white px-4 py-3"
                   placeholder="Password"
                   type="password"
                   {...loginForm.register("password")}
                 />
                 <p className="-mt-2 text-xs text-rose-600">{loginForm.formState.errors.password?.message}</p>
-                <button className="w-full rounded-full bg-brand-strong px-5 py-3 text-sm font-semibold text-white" type="submit">
+                <button className="topbar-shade w-full rounded-full px-5 py-3 text-sm font-semibold text-white" type="submit">
                   {loginForm.formState.isSubmitting ? "Signing In..." : "Sign In"}
                 </button>
                 <button
-                  className="w-full rounded-full border border-line bg-white/70 px-5 py-3 text-sm font-semibold text-slate-700"
+                  className="w-full rounded-full border border-line bg-white px-5 py-3 text-sm font-semibold text-slate-700"
                   onClick={() => openForgotPasswordView(loginForm.getValues("email"))}
                   type="button"
                 >
@@ -345,25 +345,25 @@ export default function LoginPage() {
                   }
                 })}
               >
-                <input className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3" placeholder="Full name" {...registerForm.register("fullName")} />
+                <input className="w-full rounded-2xl border border-line bg-white px-4 py-3" placeholder="Full name" {...registerForm.register("fullName")} />
                 <p className="-mt-2 text-xs text-rose-600">{registerForm.formState.errors.fullName?.message}</p>
-                <input className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3" placeholder="Email" {...registerForm.register("email")} />
+                <input className="w-full rounded-2xl border border-line bg-white px-4 py-3" placeholder="Email" {...registerForm.register("email")} />
                 <p className="-mt-2 text-xs text-rose-600">{registerForm.formState.errors.email?.message}</p>
                 <input
-                  className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3"
+                  className="w-full rounded-2xl border border-line bg-white px-4 py-3"
                   placeholder="Password"
                   type="password"
                   {...registerForm.register("password")}
                 />
                 <p className="-mt-2 text-xs text-rose-600">{registerForm.formState.errors.password?.message}</p>
                 <input
-                  className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3"
+                  className="w-full rounded-2xl border border-line bg-white px-4 py-3"
                   placeholder="Confirm password"
                   type="password"
                   {...registerForm.register("confirmPassword")}
                 />
                 <p className="-mt-2 text-xs text-rose-600">{registerForm.formState.errors.confirmPassword?.message}</p>
-                <button className="w-full rounded-full bg-brand px-5 py-3 text-sm font-semibold text-white" type="submit">
+                <button className="topbar-shade w-full rounded-full px-5 py-3 text-sm font-semibold text-white" type="submit">
                   {registerForm.formState.isSubmitting ? "Creating Account..." : "Register"}
                 </button>
               </form>
@@ -400,15 +400,15 @@ export default function LoginPage() {
                   }
                 })}
               >
-                <input className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3" placeholder="Email" {...verifyForm.register("email")} />
+                <input className="w-full rounded-2xl border border-line bg-white px-4 py-3" placeholder="Email" {...verifyForm.register("email")} />
                 <p className="-mt-2 text-xs text-rose-600">{verifyForm.formState.errors.email?.message}</p>
-                <input className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 tracking-[0.35em]" placeholder="123456" {...verifyForm.register("code")} />
+                <input className="w-full rounded-2xl border border-line bg-white px-4 py-3 tracking-[0.35em]" placeholder="123456" {...verifyForm.register("code")} />
                 <p className="-mt-2 text-xs text-rose-600">{verifyForm.formState.errors.code?.message}</p>
-                <button className="w-full rounded-full bg-brand-strong px-5 py-3 text-sm font-semibold text-white" type="submit">
+                <button className="topbar-shade w-full rounded-full px-5 py-3 text-sm font-semibold text-white" type="submit">
                   {verifyForm.formState.isSubmitting ? "Verifying..." : "Verify Email"}
                 </button>
                 <button
-                  className="w-full rounded-full border border-line bg-white/70 px-5 py-3 text-sm font-semibold text-slate-700"
+                  className="w-full rounded-full border border-line bg-white px-5 py-3 text-sm font-semibold text-slate-700"
                   onClick={() => void handleResendVerificationCode()}
                   type="button"
                 >
@@ -447,9 +447,9 @@ export default function LoginPage() {
                 })}
               >
                 <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-start">
-                  <input className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3" placeholder="Email" {...forgotPasswordForm.register("email")} />
+                  <input className="w-full rounded-2xl border border-line bg-white px-4 py-3" placeholder="Email" {...forgotPasswordForm.register("email")} />
                   <button
-                    className="rounded-full border border-line bg-white/70 px-5 py-3 text-sm font-semibold text-slate-700"
+                    className="rounded-full border border-line bg-white px-5 py-3 text-sm font-semibold text-slate-700"
                     onClick={async () => {
                       const email = forgotPasswordForm.getValues("email").trim().toLowerCase();
                       if (!email) {
@@ -488,23 +488,23 @@ export default function LoginPage() {
                   </button>
                 </div>
                 <p className="-mt-2 text-xs text-rose-600">{forgotPasswordForm.formState.errors.email?.message}</p>
-                <input className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 tracking-[0.35em]" placeholder="123456" {...forgotPasswordForm.register("code")} />
+                <input className="w-full rounded-2xl border border-line bg-white px-4 py-3 tracking-[0.35em]" placeholder="123456" {...forgotPasswordForm.register("code")} />
                 <p className="-mt-2 text-xs text-rose-600">{forgotPasswordForm.formState.errors.code?.message}</p>
                 <input
-                  className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3"
+                  className="w-full rounded-2xl border border-line bg-white px-4 py-3"
                   placeholder="New password"
                   type="password"
                   {...forgotPasswordForm.register("newPassword")}
                 />
                 <p className="-mt-2 text-xs text-rose-600">{forgotPasswordForm.formState.errors.newPassword?.message}</p>
                 <input
-                  className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3"
+                  className="w-full rounded-2xl border border-line bg-white px-4 py-3"
                   placeholder="Confirm password"
                   type="password"
                   {...forgotPasswordForm.register("confirmPassword")}
                 />
                 <p className="-mt-2 text-xs text-rose-600">{forgotPasswordForm.formState.errors.confirmPassword?.message}</p>
-                <button className="w-full rounded-full bg-brand-strong px-5 py-3 text-sm font-semibold text-white" type="submit">
+                <button className="topbar-shade w-full rounded-full px-5 py-3 text-sm font-semibold text-white" type="submit">
                   {forgotPasswordForm.formState.isSubmitting ? "Resetting Password..." : "Reset Password"}
                 </button>
               </form>

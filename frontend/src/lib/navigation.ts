@@ -1,12 +1,8 @@
-import { BarChart3, BriefcaseBusiness, CalendarRange, ClipboardCheck, Clock3, FileText, Flag, FolderKanban, LayoutDashboard, PackageSearch, ShieldAlert, Trees, UserRoundPlus, Users } from "lucide-react";
+import { BarChart3, BriefcaseBusiness, Clock3, FileText, FolderKanban, LayoutDashboard, PackageSearch, ShieldAlert, UserRoundPlus, Users } from "lucide-react";
 
 export const navigationItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/projects", label: "Projects", icon: FolderKanban },
-  { href: "/wbs", label: "WBS", icon: Trees },
-  { href: "/milestones", label: "Milestones", icon: Flag },
-  { href: "/activities", label: "Activities", icon: ClipboardCheck },
-  { href: "/gantt", label: "Gantt", icon: CalendarRange },
   { href: "/employee-allocations", label: "Allocations", icon: UserRoundPlus },
   { href: "/timesheets", label: "Timesheets", icon: Clock3 },
   { href: "/budgets", label: "Budgets", icon: BriefcaseBusiness },

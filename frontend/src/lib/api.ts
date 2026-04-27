@@ -136,6 +136,7 @@ export const dashboardApi = {
 
 export const projectApi = {
   getProjects: () => api.get("/projects"),
+  getProjectWorkspace: (id: string) => api.get(`/projects/${id}/workspace`),
   createProject: (payload: {
     projectCode: string;
     projectName: string;
@@ -157,6 +158,101 @@ export const projectApi = {
       budgetAmount: number;
     },
   ) => api.put(`/projects/${id}`, payload),
+  createProjectWorkspace: (payload: {
+    project: {
+      projectCode: string;
+      projectName: string;
+      clientName: string;
+      projectManager: string;
+      startDate: string;
+      endDate: string;
+      budgetAmount: number;
+    };
+    wbs: Array<{
+      id: number | null;
+      clientKey: string;
+      wbsCode: string;
+      wbsName: string;
+      levelNo: number;
+      progressPercent: number;
+      budgetAmount: number;
+      actualAmount: number;
+    }>;
+    activities: Array<{
+      id: number | null;
+      clientKey: string;
+      wbsId: number | null;
+      wbsClientKey: string | null;
+      activityCode: string;
+      activityName: string;
+      plannedStart: string;
+      plannedEnd: string;
+      durationDays: number;
+      progressPercent: number;
+      status: string;
+      responsibleUser: string;
+    }>;
+    milestones: Array<{
+      id: number | null;
+      clientKey: string;
+      wbsId: number | null;
+      wbsClientKey: string | null;
+      milestoneCode: string;
+      milestoneName: string;
+      plannedDate: string;
+      actualDate: string | null;
+      status: string;
+    }>;
+  }) => api.post("/projects/workspace", payload),
+  updateProjectWorkspace: (
+    id: string,
+    payload: {
+      project: {
+        projectCode: string;
+        projectName: string;
+        clientName: string;
+        projectManager: string;
+        startDate: string;
+        endDate: string;
+        budgetAmount: number;
+      };
+      wbs: Array<{
+        id: number | null;
+        clientKey: string;
+        wbsCode: string;
+        wbsName: string;
+        levelNo: number;
+        progressPercent: number;
+        budgetAmount: number;
+        actualAmount: number;
+      }>;
+      activities: Array<{
+        id: number | null;
+        clientKey: string;
+        wbsId: number | null;
+        wbsClientKey: string | null;
+        activityCode: string;
+        activityName: string;
+        plannedStart: string;
+        plannedEnd: string;
+        durationDays: number;
+        progressPercent: number;
+        status: string;
+        responsibleUser: string;
+      }>;
+      milestones: Array<{
+        id: number | null;
+        clientKey: string;
+        wbsId: number | null;
+        wbsClientKey: string | null;
+        milestoneCode: string;
+        milestoneName: string;
+        plannedDate: string;
+        actualDate: string | null;
+        status: string;
+      }>;
+    },
+  ) => api.put(`/projects/${id}/workspace`, payload),
   deactivateProject: (id: string) => api.put(`/projects/${id}/deactivate`),
 };
 

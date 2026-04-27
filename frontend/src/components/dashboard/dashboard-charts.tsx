@@ -13,7 +13,7 @@ export function CostTrendChart({ data }: { data: ReportSnapshot[] }) {
   const isClient = useIsClient();
 
   if (!isClient) {
-    return <div className="h-[300px] w-full rounded-[20px] bg-white/40" />;
+    return <div className="h-[300px] w-full rounded-none bg-white/40" />;
   }
 
   return (
@@ -38,7 +38,7 @@ export function MilestonePulseChart({ data }: { data: MilestonePulseItem[] }) {
   const colors = ["#163a57", "#bf5a36", "#c17b1f"];
 
   if (!isClient) {
-    return <div className="h-[300px] w-full rounded-[20px] bg-white/40" />;
+    return <div className="h-[300px] w-full rounded-none bg-white/40" />;
   }
 
   return (

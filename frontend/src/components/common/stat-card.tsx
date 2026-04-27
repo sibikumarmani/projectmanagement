@@ -8,7 +8,7 @@ const toneClasses: Record<DashboardMetric["tone"], string> = {
 
 export function StatCard({ label, value, change, tone }: DashboardMetric) {
   return (
-    <article className="panel rounded-[24px] p-5">
+    <article className="panel flex h-full flex-col rounded-[24px] p-5">
       <div className="mb-4 flex items-center justify-between">
         <p className="text-sm font-medium text-slate-500">{label}</p>
         <span className={`rounded-full px-3 py-1 text-xs font-semibold ${toneClasses[tone]}`}>{change ?? "Live"}</span>

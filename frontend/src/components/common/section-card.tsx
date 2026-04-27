@@ -9,7 +9,7 @@ type SectionCardProps = {
 
 export function SectionCard({ title, eyebrow, action, children }: SectionCardProps) {
   return (
-    <section className="panel rounded-[28px] p-4 sm:p-6">
+    <section className="panel flex h-full flex-col rounded-[28px] p-4 sm:p-6">
       <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           {eyebrow ? (
@@ -19,7 +19,7 @@ export function SectionCard({ title, eyebrow, action, children }: SectionCardPro
         </div>
         {action ? <div className="w-full sm:w-auto">{action}</div> : null}
       </div>
-      {children}
+      <div className="flex-1">{children}</div>
     </section>
   );
 }

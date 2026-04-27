@@ -32,14 +32,32 @@ public class ProjectController {
         return ApiResponse.ok(projectService.getProject(id));
     }
 
+    @GetMapping("/{id}/workspace")
+    public ApiResponse<ProjectWorkspaceDto> getProjectWorkspace(@PathVariable Long id) {
+        return ApiResponse.ok(projectService.getProjectWorkspace(id));
+    }
+
     @PostMapping
     public ApiResponse<ProjectSummaryDto> createProject(@Valid @RequestBody ProjectCreateRequest request) {
         return ApiResponse.ok(projectService.createProject(request));
     }
 
+    @PostMapping("/workspace")
+    public ApiResponse<ProjectWorkspaceDto> createProjectWorkspace(@Valid @RequestBody ProjectWorkspaceRequest request) {
+        return ApiResponse.ok(projectService.createProjectWorkspace(request));
+    }
+
     @PutMapping("/{id}")
     public ApiResponse<ProjectSummaryDto> updateProject(@PathVariable Long id, @Valid @RequestBody ProjectCreateRequest request) {
         return ApiResponse.ok(projectService.updateProject(id, request));
+    }
+
+    @PutMapping("/{id}/workspace")
+    public ApiResponse<ProjectWorkspaceDto> updateProjectWorkspace(
+        @PathVariable Long id,
+        @Valid @RequestBody ProjectWorkspaceRequest request
+    ) {
+        return ApiResponse.ok(projectService.updateProjectWorkspace(id, request));
     }
 
     @PutMapping("/{id}/deactivate")

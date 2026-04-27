@@ -136,6 +136,13 @@ export type BillingItem = {
   remarks: string | null;
 };
 
+export type ProjectWorkspace = {
+  project: ProjectRecord;
+  wbs: WbsRecord[];
+  activities: ActivityItem[];
+  milestones: MilestoneItem[];
+};
+
 export type UserRecord = {
   id: string;
   userCode: string;

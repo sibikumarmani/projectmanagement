@@ -8,6 +8,8 @@ public interface MilestoneRepository extends JpaRepository<MilestoneEntity, Long
 
     List<MilestoneEntity> findByProjectIdOrderByPlannedDateAsc(Long projectId);
 
+    List<MilestoneEntity> findByProjectId(Long projectId);
+
     boolean existsByProjectIdAndMilestoneCodeIgnoreCase(Long projectId, String milestoneCode);
 
     boolean existsByProjectIdAndMilestoneCodeIgnoreCaseAndIdNot(Long projectId, String milestoneCode, Long id);
