@@ -4,7 +4,9 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { AppShell } from "@/components/layout/app-shell";
+import { DataTable } from "@/components/common/data-table";
 import { SectionCard } from "@/components/common/section-card";
+import { SidebarDrawer } from "@/components/common/sidebar-drawer";
 import { projectApi } from "@/lib/api";
 import type { ProjectRecord } from "@/lib/types";
 import { useAppStore } from "@/store/app-store";
@@ -253,140 +255,160 @@ export default function ProjectsPage() {
             No projects matched your search.
           </div>
         ) : (
-          <div className="grid gap-4 lg:grid-cols-2">
-            {filteredProjects.map((project) => {
-              const isLastViewed = project.id === selectedProjectId;
+          <DataTable
+            columns={[
+              {
+                key: "projectCode",
+                header: "Project",
+                render: (project) => (
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand">{project.projectCode}</p>
+                    <p className="mt-1 font-semibold text-brand-strong">{project.projectName}</p>
+                  </div>
+                ),
+              },
+              { key: "clientName", header: "Client" },
+              { key: "projectManager", header: "Manager" },
+              { key: "startDate", header: "Start" },
+              { key: "endDate", header: "End" },
+              {
+                key: "budgetAmount",
+                header: "Budget",
+                render: (project) => formatCurrency(project.budgetAmount),
+              },
+              {
+                key: "actualAmount",
+                header: "Actual",
+                render: (project) => formatCurrency(project.actualAmount),
+              },
+              {
+                key: "progressPercent",
+                header: "Progress",
+                render: (project) => `${project.progressPercent}%`,
+              },
+              {
+                key: "status",
+                header: "Status",
+                render: (project) => (
+                  <span className="inline-flex rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-700 shadow-[0_6px_14px_rgba(24,50,71,0.08)]">
+                    {formatStatus(project.status)}
+                  </span>
+                ),
+              },
+              {
+                key: "actions",
+                header: "Action",
+                render: (project) => {
+                  const isLastViewed = project.id === selectedProjectId;
 
-              return (
-                <button
-                  key={project.id}
-                  className={`rounded-[24px] border px-5 py-5 text-left transition ${
-                    isLastViewed ? "border-brand-strong bg-brand-strong/10" : "border-line bg-white/75 hover:border-brand hover:bg-white"
-                  }`}
-                  onDoubleClick={() => openProject(project.id)}
-                  type="button"
-                >
-                  <div className="mb-4 flex items-start justify-between gap-3">
-                    <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand">{project.projectCode}</p>
-                      <h3 className="mt-2 text-xl font-semibold text-brand-strong">{project.projectName}</h3>
+                  return (
+                    <div className="flex items-center gap-3">
+                      <button
+                        className="rounded-full bg-brand-strong px-4 py-2 text-xs font-semibold text-white"
+                        onClick={() => openProject(project.id)}
+                        type="button"
+                      >
+                        Open
+                      </button>
+                      {isLastViewed ? <span className="text-xs font-semibold text-brand">Last opened</span> : null}
                     </div>
-                    <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-700">{formatStatus(project.status)}</span>
-                  </div>
-
-                  <div className="grid gap-3 text-sm text-slate-600 sm:grid-cols-2">
-                    <p>Client: {project.clientName}</p>
-                    <p>Manager: {project.projectManager}</p>
-                    <p>Start: {project.startDate}</p>
-                    <p>End: {project.endDate}</p>
-                    <p>Budget: {formatCurrency(project.budgetAmount)}</p>
-                    <p>Actual: {formatCurrency(project.actualAmount)}</p>
-                    <p>Progress: {project.progressPercent}%</p>
-                    <p>{isLastViewed ? "Last opened project" : "Double-click to edit"}</p>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
+                  );
+                },
+              },
+            ]}
+            rows={filteredProjects}
+          />
         )}
       </SectionCard>
 
-      {isAddProjectOpen ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/45 p-4">
-          <div className="w-full max-w-3xl rounded-[28px] border border-line bg-white p-6 shadow-2xl">
-            <div className="mb-6 flex items-start justify-between gap-4">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand">Project</p>
-                <h2 className="mt-2 text-2xl font-semibold text-brand-strong">Add Project</h2>
-                <p className="mt-1 text-sm text-slate-600">Enter the project header details here, then save it to the summary list.</p>
-              </div>
-              <button className="rounded-full border border-line px-4 py-2 text-sm font-semibold text-slate-600" onClick={closeAddProjectModal} type="button">
-                Close
-              </button>
-            </div>
+      <SidebarDrawer
+        description="Enter the project header details here, then save it directly into the summary register."
+        eyebrow="Project"
+        onClose={closeAddProjectModal}
+        open={isAddProjectOpen}
+        title="Add Project"
+        widthClassName="sm:max-w-3xl"
+      >
+        {createError ? <p className="mb-4 rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{createError}</p> : null}
 
-            {createError ? <p className="mb-4 rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{createError}</p> : null}
-
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              <label className="block">
-                <span className="mb-2 block text-sm font-semibold text-brand-strong">Project Code</span>
-                <input
-                  className="w-full rounded-2xl border border-line bg-white px-4 py-3 text-sm outline-none"
-                  onChange={(event) => setProjectDraft((current) => ({ ...current, projectCode: event.target.value }))}
-                  value={projectDraft.projectCode}
-                />
-              </label>
-              <label className="block md:col-span-2">
-                <span className="mb-2 block text-sm font-semibold text-brand-strong">Project Name</span>
-                <input
-                  className="w-full rounded-2xl border border-line bg-white px-4 py-3 text-sm outline-none"
-                  onChange={(event) => setProjectDraft((current) => ({ ...current, projectName: event.target.value }))}
-                  value={projectDraft.projectName}
-                />
-              </label>
-              <label className="block">
-                <span className="mb-2 block text-sm font-semibold text-brand-strong">Client</span>
-                <input
-                  className="w-full rounded-2xl border border-line bg-white px-4 py-3 text-sm outline-none"
-                  onChange={(event) => setProjectDraft((current) => ({ ...current, clientName: event.target.value }))}
-                  value={projectDraft.clientName}
-                />
-              </label>
-              <label className="block">
-                <span className="mb-2 block text-sm font-semibold text-brand-strong">Project Manager</span>
-                <input
-                  className="w-full rounded-2xl border border-line bg-white px-4 py-3 text-sm outline-none"
-                  onChange={(event) => setProjectDraft((current) => ({ ...current, projectManager: event.target.value }))}
-                  value={projectDraft.projectManager}
-                />
-              </label>
-              <label className="block">
-                <span className="mb-2 block text-sm font-semibold text-brand-strong">Budget Amount</span>
-                <input
-                  className="w-full rounded-2xl border border-line bg-white px-4 py-3 text-sm outline-none"
-                  min={0}
-                  onChange={(event) => setProjectDraft((current) => ({ ...current, budgetAmount: Number(event.target.value) }))}
-                  step="0.01"
-                  type="number"
-                  value={projectDraft.budgetAmount}
-                />
-              </label>
-              <label className="block">
-                <span className="mb-2 block text-sm font-semibold text-brand-strong">Start Date</span>
-                <input
-                  className="w-full rounded-2xl border border-line bg-white px-4 py-3 text-sm outline-none"
-                  onChange={(event) => setProjectDraft((current) => ({ ...current, startDate: event.target.value }))}
-                  type="date"
-                  value={projectDraft.startDate}
-                />
-              </label>
-              <label className="block">
-                <span className="mb-2 block text-sm font-semibold text-brand-strong">End Date</span>
-                <input
-                  className="w-full rounded-2xl border border-line bg-white px-4 py-3 text-sm outline-none"
-                  onChange={(event) => setProjectDraft((current) => ({ ...current, endDate: event.target.value }))}
-                  type="date"
-                  value={projectDraft.endDate}
-                />
-              </label>
-            </div>
-
-            <div className="mt-6 flex justify-end gap-3">
-              <button className="rounded-full border border-line px-5 py-3 text-sm font-semibold text-slate-700" onClick={closeAddProjectModal} type="button">
-                Cancel
-              </button>
-              <button
-                className="rounded-full bg-brand-strong px-5 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
-                disabled={isCreatingProject}
-                onClick={() => void handleCreateProject()}
-                type="button"
-              >
-                {isCreatingProject ? "Saving..." : "Save Project"}
-              </button>
-            </div>
-          </div>
+        <div className="grid gap-4 md:grid-cols-2">
+          <label className="block">
+            <span className="mb-2 block text-sm font-semibold text-brand-strong">Project Code</span>
+            <input
+              className="w-full rounded-2xl border border-line bg-white px-4 py-3 text-sm outline-none"
+              onChange={(event) => setProjectDraft((current) => ({ ...current, projectCode: event.target.value }))}
+              value={projectDraft.projectCode}
+            />
+          </label>
+          <label className="block">
+            <span className="mb-2 block text-sm font-semibold text-brand-strong">Client</span>
+            <input
+              className="w-full rounded-2xl border border-line bg-white px-4 py-3 text-sm outline-none"
+              onChange={(event) => setProjectDraft((current) => ({ ...current, clientName: event.target.value }))}
+              value={projectDraft.clientName}
+            />
+          </label>
+          <label className="block md:col-span-2">
+            <span className="mb-2 block text-sm font-semibold text-brand-strong">Project Name</span>
+            <input
+              className="w-full rounded-2xl border border-line bg-white px-4 py-3 text-sm outline-none"
+              onChange={(event) => setProjectDraft((current) => ({ ...current, projectName: event.target.value }))}
+              value={projectDraft.projectName}
+            />
+          </label>
+          <label className="block">
+            <span className="mb-2 block text-sm font-semibold text-brand-strong">Project Manager</span>
+            <input
+              className="w-full rounded-2xl border border-line bg-white px-4 py-3 text-sm outline-none"
+              onChange={(event) => setProjectDraft((current) => ({ ...current, projectManager: event.target.value }))}
+              value={projectDraft.projectManager}
+            />
+          </label>
+          <label className="block">
+            <span className="mb-2 block text-sm font-semibold text-brand-strong">Budget Amount</span>
+            <input
+              className="w-full rounded-2xl border border-line bg-white px-4 py-3 text-sm outline-none"
+              min={0}
+              onChange={(event) => setProjectDraft((current) => ({ ...current, budgetAmount: Number(event.target.value) }))}
+              step="0.01"
+              type="number"
+              value={projectDraft.budgetAmount}
+            />
+          </label>
+          <label className="block">
+            <span className="mb-2 block text-sm font-semibold text-brand-strong">Start Date</span>
+            <input
+              className="w-full rounded-2xl border border-line bg-white px-4 py-3 text-sm outline-none"
+              onChange={(event) => setProjectDraft((current) => ({ ...current, startDate: event.target.value }))}
+              type="date"
+              value={projectDraft.startDate}
+            />
+          </label>
+          <label className="block">
+            <span className="mb-2 block text-sm font-semibold text-brand-strong">End Date</span>
+            <input
+              className="w-full rounded-2xl border border-line bg-white px-4 py-3 text-sm outline-none"
+              onChange={(event) => setProjectDraft((current) => ({ ...current, endDate: event.target.value }))}
+              type="date"
+              value={projectDraft.endDate}
+            />
+          </label>
         </div>
-      ) : null}
+
+        <div className="mt-6 flex justify-end gap-3">
+          <button className="rounded-full border border-line px-5 py-3 text-sm font-semibold text-slate-700" onClick={closeAddProjectModal} type="button">
+            Cancel
+          </button>
+          <button
+            className="rounded-full bg-brand-strong px-5 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={isCreatingProject}
+            onClick={() => void handleCreateProject()}
+            type="button"
+          >
+            {isCreatingProject ? "Saving..." : "Save Project"}
+          </button>
+        </div>
+      </SidebarDrawer>
     </AppShell>
   );
 }
