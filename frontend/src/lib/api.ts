@@ -67,6 +67,7 @@ export const userApi = {
     roleName: string;
     active: boolean;
     emailVerified: boolean;
+    avatarImage: string | null;
   }) => api.post("/users", payload),
   updateUser: (
     id: string,
@@ -77,6 +78,7 @@ export const userApi = {
       roleName: string;
       active: boolean;
       emailVerified: boolean;
+      avatarImage: string | null;
     },
   ) => api.put(`/users/${id}`, payload),
   getLatestResetCode: (id: string) => api.get(`/users/${id}/latest-reset-code`),

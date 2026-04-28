@@ -52,6 +52,7 @@ public class UserManagementService {
                 .roleName(request.roleName().trim().toUpperCase())
                 .active(request.active())
                 .emailVerified(request.emailVerified())
+                .avatarImage(normalizeAvatarImage(request.avatarImage()))
                 .build()
         );
 
@@ -76,6 +77,7 @@ public class UserManagementService {
         user.setRoleName(request.roleName().trim().toUpperCase());
         user.setActive(request.active());
         user.setEmailVerified(request.emailVerified());
+        user.setAvatarImage(normalizeAvatarImage(request.avatarImage()));
 
         if (request.password() != null && !request.password().trim().isEmpty()) {
             user.setPasswordHash(passwordEncoder.encode(request.password()));
@@ -120,7 +122,29 @@ public class UserManagementService {
             user.getEmail(),
             user.getRoleName(),
             user.getActive(),
-            user.getEmailVerified()
+            user.getEmailVerified(),
+            user.getAvatarImage()
         );
+    }
+
+    private String normalizeAvatarImage(String avatarImage) {
+        if (avatarImage == null) {
+            return null;
+        }
+
+        String trimmed = avatarImage.trim();
+        if (trimmed.isEmpty()) {
+            return null;
+        }
+
+        if (!trimmed.startsWith("data:image/")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Profile image must be a valid image data URL");
+        }
+
+        if (trimmed.length() > 2_000_000) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Profile image is too large");
+        }
+
+        return trimmed;
     }
 }

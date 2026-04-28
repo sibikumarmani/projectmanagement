@@ -7,6 +7,7 @@ public record UserManagementDto(
     String email,
     String roleName,
     Boolean active,
-    Boolean emailVerified
+    Boolean emailVerified,
+    String avatarImage
 ) {
 }

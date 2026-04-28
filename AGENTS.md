@@ -2,83 +2,216 @@
 
 ## Purpose
 
-This repository contains a full-stack **Project Management and Cost Control System** for managing:
+This repository is a **full-stack Project Management and Cost Control System** for construction or project-controls workflows.
 
-- project setup
-- WBS and activity planning
-- budgeting and allocations
-- material requests and receipts
-- employee allocations and timesheets
-- actual cost capture
+If an agent uses this file to recreate the product, the result should be a project that looks and behaves like this repository:
+
+- authenticated multi-user web application
+- enterprise-style operational UI
+- modular monolith backend
+- MySQL + Flyway persistence
+- project planning centered on `Project -> WBS -> Activity`
+- transactional modules for materials, billing, allocation, and timesheets
+- dashboards and reports
+- an AI-assisted record creation side panel
+
+This file is both:
+
+- a build specification for recreating the same style of project
+- an operating guide for future changes inside this repo
+
+---
+
+## Product Identity
+
+### Product name
+
+Use a name equivalent to:
+
+- `Project Management and Cost Control System`
+- `PMS Control Center`
+- `Project Management & Cost Control`
+
+### Product goal
+
+Support end-to-end project-controls work for:
+
+- project registration
+- WBS planning
+- activity planning
+- milestone management
+- budgeting
+- employee allocations
+- timesheets
+- material requests
+- billing
 - risk tracking
-- dashboards, reports, and agent-assisted data entry
+- dashboards and reports
+- agent-assisted record creation
 
-The core business hierarchy is the source of truth for nearly every module:
+### Core hierarchy
+
+The central business hierarchy is mandatory and must remain the source of truth:
 
 **Project -> WBS -> Activity**
 
-Agents working in this repo should preserve that hierarchy in data models, APIs, UI flows, and validation logic.
+Nearly every module hangs off this chain. When reproducing or extending the system:
+
+- WBS belongs to a project
+- activity belongs to both a project and a WBS
+- milestones are project-level and may optionally reference WBS
+- material requests, risks, allocations, and timesheets must ultimately resolve to valid project/activity context
 
 ---
 
-## Current Stack
+## Exact Tech Stack
+
+Recreate the project using this stack unless the user explicitly asks for a change.
 
 ### Frontend
 
-- Next.js 16 App Router
+- Next.js `16.2.x` with App Router
+- React `19`
 - TypeScript
-- React 19
-- Tailwind CSS 4
+- Tailwind CSS `4`
 - Zustand
 - React Hook Form
 - Zod
-- Recharts
 - Axios
+- Recharts
+- Lucide React icons
+- `jspdf` for export/report generation support
 
-Frontend app lives in `frontend/`.
+Frontend lives in:
+
+- `frontend/`
 
 ### Backend
 
-- Spring Boot 3.3
-- Java 17
-- Spring Security
+- Spring Boot `3.3.x`
+- Java `17`
+- Spring Web
 - Spring Data JPA
+- Spring Security
+- Spring Validation
+- Spring Actuator
 - Flyway
+- MySQL
+- Springdoc OpenAPI UI
 - MapStruct
-- OpenAPI
-- MySQL for primary runtime
+- Lombok
+- JWT via `jjwt`
 
-Backend app lives in `backend/`.
+Backend lives in:
 
-### Agent Service
+- `backend/`
 
-- Python FastAPI service in `agent-python/`
-- Spring Boot proxies agent requests through `/api/agent/chat`
+### Agent service
+
+- Python `3.12`
+- FastAPI
+- Uvicorn
+- HTTPX
+
+Agent service lives in:
+
+- `agent-python/`
+
+### Orchestration
+
+- Docker Compose
+- separate containers for:
+  - `mysql`
+  - `backend`
+  - `agent-python`
+  - `frontend`
 
 ---
 
-## Repository Map
+## Repository Shape
 
-- `frontend/`: web UI
-- `backend/`: REST API, domain logic, persistence, auth, migrations
-- `agent-python/`: LLM-powered assistant service for creating PMS records
-- `scripts/`: helper scripts
-- `.github/`: CI or support automation
+The recreated project should follow this top-level structure:
 
-Important frontend areas:
+- `frontend/`
+- `backend/`
+- `agent-python/`
+- `scripts/`
+- `.github/`
+- `compose.yaml`
+- root `AGENTS.md`
 
-- `frontend/src/app/`: routes and pages
-- `frontend/src/components/`: reusable UI
-- `frontend/src/lib/`: API and shared utilities
-- `frontend/src/store/`: Zustand state
+### Frontend structure
 
-Important backend areas:
+Important directories:
 
-- `backend/src/main/java/com/company/pms/`: domain modules
-- `backend/src/main/resources/db/migration/`: Flyway migrations
-- `backend/src/test/`: backend tests
+- `frontend/src/app/`
+- `frontend/src/components/`
+- `frontend/src/lib/`
+- `frontend/src/store/`
+- `frontend/public/`
 
-Current backend modules include:
+Current route set to preserve:
+
+- `/login`
+- `/dashboard`
+- `/projects`
+- `/projects/[projectId]`
+- `/wbs`
+- `/activities`
+- `/milestones`
+- `/budgets`
+- `/employee-allocations`
+- `/timesheets`
+- `/material-requests`
+- `/billing`
+- `/risks`
+- `/gantt`
+- `/reports`
+- `/users`
+- `/agent`
+
+Current shared component families:
+
+- layout:
+  - `app-shell`
+  - `layout-wrapper`
+  - `menu-bar`
+  - `top-bar`
+- common:
+  - `section-card`
+  - `data-table`
+  - `sidebar-drawer`
+  - `stat-card`
+- business forms:
+  - activity form
+  - billing form
+  - employee allocation form
+  - material request form
+  - milestone form
+  - project form
+  - project workspace editor
+  - risk form
+  - timesheet form
+  - user form
+  - WBS form
+- dashboard:
+  - charts
+- agent:
+  - side-panel chat UI
+
+### Backend structure
+
+Base package:
+
+- `backend/src/main/java/com/company/pms/`
+
+Important support areas:
+
+- `common/api`
+- `common/config`
+- `security`
+
+Current business modules:
 
 - `activity`
 - `agent`
@@ -91,21 +224,48 @@ Current backend modules include:
 - `notification`
 - `project`
 - `risk`
-- `security`
 - `timesheet`
 - `wbs`
 
+### Database migrations
+
+Recreated project should use Flyway with versioned SQL migrations in:
+
+- `backend/src/main/resources/db/migration/`
+
+Current migration progression:
+
+- `V1__init_core_schema.sql`
+- `V2__expand_core_schema.sql`
+- `V3__seed_core_data.sql`
+- `V4__add_milestones_and_auth.sql`
+- `V5__add_registration_verification.sql`
+- `V6__add_password_reset_codes.sql`
+- `V7__add_material_requests.sql`
+- `V8__add_billings.sql`
+- `V9__add_employee_allocations_and_timesheets.sql`
+- `V10__add_user_avatar_image.sql`
+
+This sequence reflects real project evolution and is a good template for similar repos.
+
 ---
 
-## Architectural Direction
+## Architectural Model
 
-Build and maintain this system as a **modular monolith**.
+### Overall style
 
-Prefer clean domain separation over premature microservices. Keep logic close to the owning module, but design boundaries so future extraction is still possible.
+Build and maintain this application as a **modular monolith**.
 
-### Backend shape
+That means:
 
-Each business module should generally trend toward:
+- one Spring Boot backend
+- clean business modules
+- internal separation by ownership
+- no premature microservice splitting
+
+### Backend design expectations
+
+Each module should trend toward this internal shape:
 
 - controller
 - service
@@ -113,154 +273,491 @@ Each business module should generally trend toward:
 - dto
 - entity
 - mapper
-- validator or specification
+- validator or business rule helper
 
-Do not expose JPA entities directly from controllers.
+Rules:
 
-### Frontend shape
+- never expose JPA entities directly from controllers
+- put business rules in services, not only annotations
+- keep transactional logic explicit
+- keep module ownership clear
+- use DTO request/response contracts
 
-Prefer this layering:
+### Frontend design expectations
 
-- route/page composition in `src/app`
-- reusable business UI in `src/components`
-- API calls in `src/lib` or dedicated service modules
+Use this layering:
+
+- pages and route composition in `src/app`
+- business UI in `src/components`
+- API utilities in `src/lib`
+- shared state in Zustand only when truly shared
 - forms with React Hook Form + Zod
-- lightweight client state in Zustand only where shared state is genuinely needed
+
+Rules:
+
+- respect Next.js App Router conventions
+- prefer server-safe patterns
+- avoid unnecessary client components
+- preserve the existing operational enterprise style
 
 ---
 
-## Domain Rules That Must Survive Refactors
+## Required UX Style
 
-These rules are business-critical:
+When recreating this project, the UI should feel like this repository:
+
+- clean enterprise application
+- large operational cards and tables
+- soft layered backgrounds
+- strong top navigation and workspace shell
+- practical forms with clear labels
+- no consumer-app whimsy
+- no flashy marketing-site patterns
+
+The current UI language includes:
+
+- persistent top app bar
+- secondary menu bar for modules
+- page shell with large bordered content surface
+- card-based sections
+- right-side drawer forms
+- dashboard stat cards and charts
+- agent sidebar launched from floating action button
+
+### Theme behavior
+
+The frontend already supports:
+
+- light mode
+- dark mode
+- custom accent color selection
+- theme persistence via local storage
+- theme tokens in global CSS
+
+If rebuilding, include the same theming capability rather than a fixed palette.
+
+---
+
+## Business Modules To Recreate
+
+The project should include these modules.
+
+### 1. Authentication and account management
+
+Must include:
+
+- login
+- registration
+- email verification
+- resend verification code
+- forgot password
+- reset password
+- refresh token flow
+- current account profile
+- change password
+- profile image/avatar support
+- admin user management
+
+### 2. Projects
+
+Must include:
+
+- project register
+- create project
+- edit project
+- project detail/workspace page
+
+Typical project fields:
+
+- `projectCode`
+- `projectName`
+- `clientName`
+- `projectManager`
+- `startDate`
+- `endDate`
+- `budgetAmount`
+- status/progress/actual summary values
+
+### 3. WBS
+
+Must include:
+
+- WBS listing
+- WBS create/edit
+- project-linked WBS hierarchy
+
+Typical fields:
+
+- `wbsCode`
+- `wbsName`
+- `levelNo`
+- `progressPercent`
+- `budgetAmount`
+- `actualAmount`
+
+### 4. Activities
+
+Must include:
+
+- activity list
+- activity create/edit
+- planning dates
+- responsible user
+- progress and status
+
+Typical fields:
+
+- `activityCode`
+- `activityName`
+- `projectId`
+- `wbsId`
+- `plannedStart`
+- `plannedEnd`
+- `durationDays`
+- `progressPercent`
+- `status`
+- `responsibleUser`
+
+### 5. Milestones
+
+Must include:
+
+- milestone list
+- create/edit milestone
+- project-linked dates
+
+Typical fields:
+
+- `milestoneCode`
+- `milestoneName`
+- `projectId`
+- `wbsId`
+- `plannedDate`
+- `actualDate`
+- `status`
+
+### 6. Budgeting
+
+Current repo has a budgets page and dashboard/reporting treatment. Recreated project should keep budgeting tied to activities, not project-only summary numbers.
+
+### 7. Employee allocations
+
+Must include:
+
+- allocation CRUD
+- employee-to-project/activity assignment
+- allocation date
+- percentage allocation
+- active flag
+- remarks
+
+### 8. Timesheets
+
+Must include:
+
+- timesheet CRUD
+- employee, project, activity linkage
+- work date
+- regular hours
+- overtime hours
+- allocation-aware validation
+- status
+- remarks
+
+### 9. Material requests
+
+Must include:
+
+- material request CRUD
+- activity reference
+- requested, approved, and pending quantities
+- approval-style statuses
+
+### 10. Billing
+
+Must include:
+
+- billing record CRUD
+- project and milestone linkage
+- billed amount
+- certified amount
+- status
+- remarks
+
+### 11. Risks
+
+Must include:
+
+- risk register
+- activity-linked risk
+- owner
+- probability
+- impact
+- severity
+- target date
+- status
+
+### 12. Dashboard
+
+Must include:
+
+- summary metrics
+- project overview
+- risk spotlight
+- cost trend chart
+- milestone pulse chart
+
+### 13. Reports
+
+Must include:
+
+- reporting page
+- printable/export-oriented output
+- approved data as primary reporting source
+
+### 14. Gantt / planning view
+
+Must include:
+
+- schedule visualization
+- WBS + activity timeline
+- milestone overlay
+
+### 15. AI-assisted record creation
+
+Must include:
+
+- frontend agent panel
+- backend proxy endpoint at `/api/agent/chat`
+- Python FastAPI service receiving and processing agent calls
+- agent able to create linked PMS records from natural language
+
+---
+
+## Domain Rules That Must Not Break
+
+These are project-defining rules and should be enforced in any recreated version.
 
 - `project_code` must be unique.
 - `wbs_code` must be unique within a project.
 - `activity_code` must be unique within a project.
-- An activity cannot exist without both a project and WBS.
-- Dependencies must stay within the same project.
-- Budgeting is entered at activity level.
-- Allocation must not exceed budget unless an explicit override path exists.
-- Material requests must reference a valid activity.
-- Material receipts must not exceed approved pending quantity unless an override path exists.
-- Timesheets must enforce daily-hour validation and duplicate/overlap safeguards.
-- Approved transactional data is what should feed dashboards and reports.
-- Risk severity is calculated as `probability * impact`.
-- Auditability matters for create, update, delete, approve, post, and override actions.
+- an activity cannot exist without both a project and WBS
+- dependencies must stay within the same project
+- budgeting is entered at activity level
+- allocation must not exceed budget unless an explicit override path exists
+- material requests must reference a valid activity
+- material receipts must not exceed approved pending quantity unless override logic is explicitly designed
+- timesheets must enforce daily-hour validation and duplicate/overlap safeguards
+- approved transactional data should drive dashboards and reports
+- risk severity is `probability * impact`
+- auditability matters for create, update, delete, approve, override, submit, certify, and post actions
 
-If a requested change conflicts with these rules, pause and make that tradeoff explicit.
-
----
-
-## Product Modules
-
-The intended module set is:
-
-1. Authentication and authorization
-2. Master data
-3. Projects
-4. WBS
-5. Milestones
-6. Activities and dependencies
-7. Budgeting
-8. Resource allocation
-9. Material requests
-10. Material receipts
-11. Employee allocations
-12. Timesheets
-13. Actual entries
-14. Overhead allocation
-15. Gantt and planning views
-16. Risk management
-17. Dashboard and reports
-18. Agent-assisted record creation
-
-When adding new features, map them into one of these modules instead of introducing ad hoc cross-cutting folders.
+If a requested change conflicts with these rules, stop and make the tradeoff explicit.
 
 ---
 
-## Data and API Expectations
+## Data Model Expectations
 
-### Database
+Use MySQL as the primary runtime database.
 
-- MySQL is the primary target database.
-- Flyway migrations are the canonical way to evolve schema.
-- Keep foreign keys and indexes aligned with `project_id`, `wbs_id`, `activity_id`, document/reference numbers, dates, and statuses.
+### Schema expectations
 
-### APIs
+Design the schema with strong linkage around:
 
-- REST-first design
+- `project_id`
+- `wbs_id`
+- `activity_id`
+- document/reference numbers
+- dates
+- statuses
+
+Use:
+
+- foreign keys
+- indexes
+- versioned Flyway migrations
+
+Do not rely on JPA auto-create behavior as the main schema strategy.
+
+### Auth/account expectations
+
+Current system supports:
+
+- users
+- roles via `roleName`
+- active/inactive state
+- email verification state
+- password reset codes
+- avatar image storage as image data URL text
+
+Recreated project should support equivalent account capabilities.
+
+---
+
+## API Design Expectations
+
+The backend is REST-first.
+
+When reproducing the project, keep:
+
 - predictable resource naming
-- validation in both request DTOs and service-layer business logic
-- secure endpoints with Spring Security
-- OpenAPI docs should remain usable after API changes
+- JSON DTO contracts
+- validation annotations on request DTOs
+- business validation in services
+- Spring Security protection
+- usable OpenAPI docs
 
-### Audit and approval
+### Important API families
 
-For transactional modules, design with status transitions in mind, not just CRUD.
+The current frontend/backend shape implies API groups like:
 
-Typical examples:
+- `/api/auth/*`
+- `/api/account/*`
+- `/api/users/*`
+- `/api/projects/*`
+- `/api/wbs/*`
+- `/api/activities/*`
+- `/api/milestones/*`
+- `/api/employee-allocations/*`
+- `/api/timesheets/*`
+- `/api/material-requests/*`
+- `/api/billing/*`
+- `/api/risks/*`
+- `/api/dashboard/*`
+- `/api/agent/chat`
 
-- Draft -> Submitted -> Approved -> Posted
-- Draft -> Submitted -> Approved -> Partially Received -> Fully Received
-
----
-
-## Working Conventions For Agents
-
-### General
-
-- Make changes that fit the existing stack instead of introducing parallel patterns.
-- Prefer incremental work over speculative abstraction.
-- Preserve existing domain language: project, WBS, activity, budget, allocation, receipt, timesheet, actual, risk, billing.
-- Keep user-facing labels aligned with construction/project-controls terminology.
-
-### Frontend
-
-- Check `frontend/AGENTS.md` before changing Next.js code.
-- Respect App Router conventions.
-- Prefer server-safe patterns and avoid unnecessary client components.
-- Reuse existing shared components before creating new ones.
-- Keep tables, cards, dashboards, and forms consistent with the current enterprise UI style.
-- When building forms, validate with Zod and surface useful field errors.
-
-### Backend
-
-- Put business rules in services and validators, not just controllers.
-- Use DTOs for request and response payloads.
-- Keep transactional operations explicit.
-- Update Flyway migrations for schema changes; do not rely on JPA auto-create behavior.
-- Maintain clear module ownership. If logic belongs to `material`, do not bury it in unrelated packages.
-
-### Python agent service
-
-- Treat `agent-python/` as a separate service boundary.
-- Keep prompts, tool wiring, and backend contracts stable.
-- If you change the Spring endpoint contract, update the Python agent accordingly.
+The exact implementation may vary slightly, but recreated projects should preserve this overall REST structure.
 
 ---
 
-## Delivery Priorities
+## Workflow Expectations
 
-When deciding what to build next, prefer this sequence unless the user says otherwise:
+This is not a toy CRUD app. Build transactional modules with workflow states.
 
-1. Authentication, roles, permissions
-2. Master data
-3. Projects
-4. WBS, milestones, activities, dependencies
-5. Budgeting and allocation
-6. Material flow
-7. Employee allocation and timesheets
-8. Actuals and overhead allocation
-9. Risk management
-10. Dashboard, reports, exports, and polishing
+Typical flows:
 
-If asked to extend unfinished modules, prioritize working end-to-end flows over decorative UI.
+- `Draft -> Submitted -> Approved -> Posted`
+- `Draft -> Submitted -> Approved -> Partially Received -> Fully Received`
+- planning state progressions for activities and milestones
+
+Recreated versions should support status-driven operations, not just unconstrained CRUD.
 
 ---
 
-## Local Run Expectations
+## Frontend Behavior Expectations
 
-Typical local commands:
+### App shell
+
+Authenticated screens should use a consistent shell with:
+
+- top bar
+- navigation menu
+- page wrapper
+- floating button for agent access
+- sidebar/drawer patterns for editing
+
+### Forms
+
+Forms should:
+
+- use React Hook Form + Zod
+- show field-level errors
+- support create and edit flows
+- preserve existing domain labels
+
+### State
+
+Zustand is used for lightweight shared state such as:
+
+- auth token
+- refresh token
+- hydration state
+- current user profile
+- selected project
+
+Do not replace this with Redux unless explicitly asked.
+
+### Theme
+
+Preserve:
+
+- theme tokens in global CSS
+- data-theme switching
+- color customization
+- accessible contrast
+
+---
+
+## Backend Behavior Expectations
+
+### Security
+
+Preserve:
+
+- JWT authentication
+- refresh token support
+- Spring Security-based endpoint protection
+- account-scoped profile actions
+- admin-style user management
+
+### Validation
+
+Preserve both:
+
+- DTO validation
+- service-level business validation
+
+### Mapping
+
+MapStruct is part of the intended stack. Use it where mapping complexity grows, especially in DTO/entity transitions.
+
+---
+
+## Agent Service Expectations
+
+The Python service is a separate boundary and should stay that way.
+
+Current intent:
+
+- FastAPI endpoint(s)
+- backend proxies requests to it
+- creates PMS records through structured backend contracts
+
+If changing backend agent payloads:
+
+- update Python service contract too
+
+Avoid turning the agent service into a frontend-only mock.
+
+---
+
+## Environment And Runtime
+
+### Local ports
+
+Expected local runtime:
+
+- frontend: `http://localhost:3000`
+- backend: `http://localhost:8080`
+- Swagger UI: `http://localhost:8080/swagger-ui.html`
+- MySQL via Docker: `localhost:3307`
+
+### Environment/config
+
+Backend local runtime expects:
+
+- `backend/.env.properties`
+
+Compose setup should provide:
+
+- MySQL database
+- backend DB connection
+- agent-python service URL
+- frontend API base URL
+
+### Typical commands
+
+Recreated project should support equivalent workflows:
 
 ```bash
 cd frontend && npm run dev
@@ -268,32 +765,43 @@ cd backend && ./mvnw spring-boot:run
 docker compose up --build
 ```
 
-Backend local runtime expects MySQL configuration through `backend/.env.properties`.
+---
 
-Important runtime notes:
+## Testing And Verification Expectations
 
-- frontend default host: `http://localhost:3000`
-- backend default host: `http://localhost:8080`
-- Swagger UI: `http://localhost:8080/swagger-ui.html`
-- Docker MySQL is exposed on `localhost:3307`
+Before completing meaningful work:
+
+- run `npm run lint` in `frontend/` for frontend changes when feasible
+- run relevant backend tests or at least a backend package/build verification when feasible
+- call out anything not verified
+
+Recommended test focus:
+
+- hierarchy validation
+- amount and quantity rollups
+- workflow transitions
+- auth and permission-sensitive behavior
+- timesheet validation
+- posting/report correctness
 
 ---
 
-## Testing Expectations
+## Delivery Priorities
 
-Before finishing meaningful code changes:
+If an agent needs to decide what to build first in a recreated version, use this order:
 
-- run `npm run lint` in `frontend/` for frontend edits when feasible
-- run backend tests relevant to the changed module when feasible
-- call out anything you could not verify
+1. Authentication, roles, permissions
+2. Projects
+3. WBS, milestones, activities
+4. Budgeting and allocation
+5. Material flow
+6. Timesheets and employee allocation
+7. Billing and actuals
+8. Risk management
+9. Dashboard and reports
+10. Agent-assisted creation and polish
 
-For business logic, favor tests around:
-
-- hierarchy validation
-- quantity and amount rollups
-- workflow transitions
-- permission-sensitive operations
-- posting and actual-cost generation
+Prioritize working end-to-end flows over decorative UI.
 
 ---
 
@@ -302,30 +810,37 @@ For business logic, favor tests around:
 Good changes usually:
 
 - strengthen the `Project -> WBS -> Activity` model
-- improve real workflow support instead of adding placeholder CRUD
-- keep backend modules cohesive
-- replace mock data with API-backed flows
-- improve validation, auditability, and reporting correctness
+- improve real workflow support
+- keep modules cohesive
+- replace placeholder data with API-backed behavior
+- improve validation, auditability, and reporting accuracy
+- preserve enterprise UX consistency
 
 Risky changes usually:
 
-- bypass workflow statuses
-- duplicate domain models across layers
-- break module boundaries
-- add schema changes without migrations
-- hardcode values that should come from master data
+- bypass workflow status logic
+- duplicate models across layers
+- weaken module boundaries
+- add schema changes without Flyway
+- store logic in the wrong module
+- hardcode values that belong in data or configuration
 
 ---
 
-## If You Need To Make Product Decisions
+## Reproduction Goal
 
-Default to these choices unless repo context clearly points elsewhere:
+If you use this file to generate a new project, the output should resemble this repository in all major dimensions:
 
-- Zustand over Redux for lightweight shared frontend state
-- Zod for frontend validation
-- Spring Data JPA + Flyway for persistence work
-- REST endpoints over GraphQL
-- modular monolith over service splitting
-- enterprise clarity over flashy UI patterns
+- same domain
+- same stack
+- same modular boundaries
+- same primary routes
+- same data hierarchy
+- same transactional workflows
+- same enterprise UI shell
+- same AI-assisted side-panel concept
+- same Dockerized local developer experience
 
-When in doubt, optimize for correctness, traceability, and maintainability in project-controls workflows.
+Do not produce a generic CRUD starter.
+
+Produce a **project-controls application** with concrete modules, business rules, auth flows, planning surfaces, transactional screens, reporting, and an integrated agent workflow like this repository.

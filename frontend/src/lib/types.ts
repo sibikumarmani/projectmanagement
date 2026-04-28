@@ -151,6 +151,7 @@ export type UserRecord = {
   roleName: string;
   active: boolean;
   emailVerified: boolean;
+  avatarImage: string | null;
 };
 
 export type UserResetCodeRecord = {

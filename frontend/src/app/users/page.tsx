@@ -133,6 +133,7 @@ export default function UsersPage() {
         roleName: values.roleName,
         active: values.active,
         emailVerified: values.emailVerified,
+        avatarImage: values.avatarImage ?? null,
         ...(values.password && values.password.trim().length > 0 ? { password: values.password } : {}),
       };
 
@@ -225,6 +226,29 @@ export default function UsersPage() {
           <DataTable
             rows={users}
             columns={[
+              {
+                key: "avatarImage",
+                header: "Image",
+                render: (row) =>
+                  row.avatarImage ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      alt={`${row.fullName} avatar`}
+                      className="h-10 w-10 rounded-full object-cover ring-1 ring-[color:var(--line-strong)]"
+                      src={row.avatarImage}
+                    />
+                  ) : (
+                    <div className="topbar-shade flex h-10 w-10 items-center justify-center rounded-full text-xs font-bold text-white">
+                      {row.fullName
+                        .split(" ")
+                        .filter(Boolean)
+                        .slice(0, 2)
+                        .map((part) => part[0])
+                        .join("")
+                        .toUpperCase() || "US"}
+                    </div>
+                  ),
+              },
               { key: "userCode", header: "User Code" },
               { key: "fullName", header: "Full Name" },
               { key: "email", header: "Email" },
@@ -296,6 +320,7 @@ export default function UsersPage() {
                       roleName: editingUser.roleName,
                       active: editingUser.active,
                       emailVerified: editingUser.emailVerified,
+                      avatarImage: editingUser.avatarImage ?? null,
                     }
                   : undefined
               }

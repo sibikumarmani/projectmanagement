@@ -11,6 +11,7 @@ public record UserUpsertRequest(
     @Size(min = 8, message = "Password must be at least 8 characters") String password,
     @NotBlank String roleName,
     @NotNull Boolean active,
-    @NotNull Boolean emailVerified
+    @NotNull Boolean emailVerified,
+    String avatarImage
 ) {
 }
