@@ -16,7 +16,7 @@ export function DataTable<T extends { id: string }>({ columns, rows }: DataTable
     <div className="overflow-hidden rounded-[22px] border border-line">
       <div className="overflow-x-auto overscroll-x-contain">
         <table className="min-w-[720px] w-full text-left">
-          <thead className="bg-white/70 text-[11px] uppercase tracking-[0.16em] text-slate-500 sm:text-xs sm:tracking-[0.18em]">
+          <thead className="surface-soft text-[11px] uppercase tracking-[0.16em] text-[color:var(--foreground-subtle)] sm:text-xs sm:tracking-[0.18em]">
             <tr>
               {columns.map((column) => (
                 <th key={String(column.key)} className="px-3 py-3 font-semibold sm:px-4">
@@ -25,9 +25,9 @@ export function DataTable<T extends { id: string }>({ columns, rows }: DataTable
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-line bg-white/35 text-sm text-slate-700">
+          <tbody className="divide-y divide-line text-sm text-[color:var(--foreground)]" style={{ background: "color-mix(in srgb, var(--surface-soft) 74%, transparent)" }}>
             {rows.map((row) => (
-              <tr key={row.id} className="hover:bg-white/70">
+              <tr key={row.id} className="transition hover:bg-[color:var(--surface-soft)]">
                 {columns.map((column) => (
                   <td key={String(column.key)} className="px-3 py-3 align-top sm:px-4">
                     {column.render ? column.render(row) : String(row[column.key as keyof T] ?? "")}

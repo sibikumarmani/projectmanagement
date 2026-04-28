@@ -76,19 +76,19 @@ export function BillingForm({
     <form className="grid gap-4 md:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Billing No</span>
-        <input {...register("billingNo")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0" />
+        <input {...register("billingNo")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0" />
         <span className="mt-2 block text-xs text-rose-600">{errors.billingNo?.message}</span>
       </label>
 
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Billing Date</span>
-        <input {...register("billingDate")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0" type="date" />
+        <input {...register("billingDate")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0" type="date" />
         <span className="mt-2 block text-xs text-rose-600">{errors.billingDate?.message}</span>
       </label>
 
       <label className="block md:col-span-2">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Milestone</span>
-        <select {...register("milestoneId")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0">
+        <select {...register("milestoneId")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0">
           <option value="">Select a milestone</option>
           {milestoneOptions.map((option) => (
             <option key={option.id} value={option.id}>
@@ -103,7 +103,7 @@ export function BillingForm({
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Billed Amount</span>
         <input
           {...register("billedAmount", { valueAsNumber: true })}
-          className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0"
+          className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0"
           min={0}
           step="0.01"
           type="number"
@@ -115,7 +115,7 @@ export function BillingForm({
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Certified Amount</span>
         <input
           {...register("certifiedAmount", { valueAsNumber: true })}
-          className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0"
+          className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0"
           min={0}
           step="0.01"
           type="number"
@@ -125,7 +125,7 @@ export function BillingForm({
 
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Status</span>
-        <select {...register("status")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0">
+        <select {...register("status")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0">
           <option value="DRAFT">Draft</option>
           <option value="SUBMITTED">Submitted</option>
           <option value="CERTIFIED">Certified</option>
@@ -138,7 +138,7 @@ export function BillingForm({
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Outstanding</span>
         <input
-          className="w-full rounded-2xl border border-line bg-slate-50 px-4 py-3 text-slate-500 outline-none ring-0"
+          className="w-full rounded-2xl border border-line bg-[color:var(--surface-muted)] px-4 py-3 text-[color:var(--foreground-subtle)] outline-none ring-0"
           readOnly
           value={Number.isFinite(outstandingAmount) ? outstandingAmount.toFixed(2) : "0.00"}
         />
@@ -148,7 +148,7 @@ export function BillingForm({
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Remarks</span>
         <textarea
           {...register("remarks")}
-          className="min-h-28 w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0"
+          className="min-h-28 w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0"
         />
         <span className="mt-2 block text-xs text-rose-600">{errors.remarks?.message}</span>
       </label>
@@ -157,7 +157,7 @@ export function BillingForm({
 
       <div className="md:col-span-2 flex items-center justify-end gap-3 border-t border-line pt-4">
         <button
-          className="rounded-full border border-line bg-white/70 px-5 py-3 text-sm font-semibold text-slate-700"
+          className="rounded-full border border-line bg-[color:var(--surface-soft)] px-5 py-3 text-sm font-semibold text-[color:var(--foreground)]"
           onClick={onCancel}
           type="button"
         >

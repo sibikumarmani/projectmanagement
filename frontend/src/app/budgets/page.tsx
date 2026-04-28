@@ -77,16 +77,16 @@ export default function BudgetsPage() {
       <div className="grid gap-4 lg:grid-cols-3">
         {snapshots.map((snapshot) => (
           <SectionCard key={snapshot.month} title={`${snapshot.month} cost snapshot`} eyebrow="Budget Control">
-            <div className="space-y-3 text-sm text-slate-600">
-              <div className="flex items-center justify-between rounded-2xl bg-white/65 px-4 py-3">
+            <div className="space-y-3 text-sm text-[color:var(--foreground-muted)]">
+              <div className="flex items-center justify-between rounded-2xl bg-[color:var(--surface-soft)] px-4 py-3">
                 <span>Budget</span>
                 <strong>{formatAmount(snapshot.budget)}</strong>
               </div>
-              <div className="flex items-center justify-between rounded-2xl bg-white/65 px-4 py-3">
+              <div className="flex items-center justify-between rounded-2xl bg-[color:var(--surface-soft)] px-4 py-3">
                 <span>Allocated</span>
                 <strong>{formatAmount(snapshot.allocated)}</strong>
               </div>
-              <div className="flex items-center justify-between rounded-2xl bg-white/65 px-4 py-3">
+              <div className="flex items-center justify-between rounded-2xl bg-[color:var(--surface-soft)] px-4 py-3">
                 <span>Actual</span>
                 <strong>{formatAmount(snapshot.actual)}</strong>
               </div>
@@ -97,7 +97,7 @@ export default function BudgetsPage() {
 
       {!error && snapshots.length === 0 ? (
         <SectionCard title="No budget snapshots yet" eyebrow="Budget Control">
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-[color:var(--foreground-muted)]">
             No budget data is available in the database yet. Add projects with start dates and budget values to populate this view.
           </p>
         </SectionCard>

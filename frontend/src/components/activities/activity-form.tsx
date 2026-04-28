@@ -71,19 +71,19 @@ export function ActivityForm({
     <form className="grid gap-4 md:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Activity Code</span>
-        <input {...register("activityCode")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0" />
+        <input {...register("activityCode")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0" />
         <span className="mt-2 block text-xs text-rose-600">{errors.activityCode?.message}</span>
       </label>
 
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Activity Name</span>
-        <input {...register("activityName")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0" />
+        <input {...register("activityName")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0" />
         <span className="mt-2 block text-xs text-rose-600">{errors.activityName?.message}</span>
       </label>
 
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">WBS</span>
-        <select {...register("wbsId")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0">
+        <select {...register("wbsId")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0">
           <option value="">Select WBS</option>
           {wbsOptions.map((option) => (
             <option key={option.id} value={option.id}>
@@ -96,7 +96,7 @@ export function ActivityForm({
 
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Status</span>
-        <select {...register("status")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0">
+        <select {...register("status")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0">
           {statusOptions.map((status) => (
             <option key={status} value={status}>
               {status}
@@ -108,19 +108,19 @@ export function ActivityForm({
 
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Planned Start</span>
-        <input {...register("plannedStart")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0" type="date" />
+        <input {...register("plannedStart")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0" type="date" />
         <span className="mt-2 block text-xs text-rose-600">{errors.plannedStart?.message}</span>
       </label>
 
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Planned Finish</span>
-        <input {...register("plannedEnd")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0" type="date" />
+        <input {...register("plannedEnd")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0" type="date" />
         <span className="mt-2 block text-xs text-rose-600">{errors.plannedEnd?.message}</span>
       </label>
 
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Duration (Days)</span>
-        <input {...register("durationDays", { valueAsNumber: true })} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0" min={1} type="number" />
+        <input {...register("durationDays", { valueAsNumber: true })} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0" min={1} type="number" />
         <span className="mt-2 block text-xs text-rose-600">{errors.durationDays?.message}</span>
       </label>
 
@@ -128,7 +128,7 @@ export function ActivityForm({
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Progress %</span>
         <input
           {...register("progressPercent", { valueAsNumber: true })}
-          className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0"
+          className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0"
           max={100}
           min={0}
           type="number"
@@ -138,7 +138,7 @@ export function ActivityForm({
 
       <label className="block md:col-span-2">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Responsible User</span>
-        <input {...register("responsibleUser")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0" />
+        <input {...register("responsibleUser")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0" />
         <span className="mt-2 block text-xs text-rose-600">{errors.responsibleUser?.message}</span>
       </label>
 
@@ -146,7 +146,7 @@ export function ActivityForm({
 
       <div className="md:col-span-2 flex items-center justify-end gap-3 border-t border-line pt-4">
         <button
-          className="rounded-full border border-line bg-white/70 px-5 py-3 text-sm font-semibold text-slate-700"
+          className="rounded-full border border-line bg-[color:var(--surface-soft)] px-5 py-3 text-sm font-semibold text-[color:var(--foreground)]"
           onClick={onCancel}
           type="button"
         >

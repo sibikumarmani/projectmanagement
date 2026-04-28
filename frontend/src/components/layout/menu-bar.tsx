@@ -18,7 +18,7 @@ export function MenuBar({ items }: MenuBarProps) {
   const pathname = usePathname();
 
   return (
-    <nav className="relative z-20 border-b border-[#d6e7ec] bg-[linear-gradient(180deg,rgba(244,250,251,0.96),rgba(235,244,247,0.94))] backdrop-blur-xl">
+    <nav className="relative z-20 border-b backdrop-blur-xl" style={{ borderColor: "var(--menu-border)", background: "var(--menu-surface)" }}>
       <div className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8">
         <div className="no-scrollbar -mx-1 flex items-center gap-2 overflow-x-auto px-1 py-3">
           {items.map(({ href, label, icon: Icon }) => {
@@ -30,9 +30,18 @@ export function MenuBar({ items }: MenuBarProps) {
                 href={href}
                 className={`flex shrink-0 items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
                   active
-                    ? "bg-[linear-gradient(135deg,#183247,#1b6d7f)] text-white shadow-[0_12px_24px_rgba(24,50,71,0.18)]"
-                    : "bg-white/92 text-slate-600 shadow-[0_6px_18px_rgba(15,23,42,0.05)] ring-1 ring-[#dbe7ea] hover:bg-white hover:text-[#138a9e]"
+                    ? "text-[color:var(--on-brand)] shadow-[0_12px_24px_rgba(24,50,71,0.18)]"
+                    : "ring-1 ring-[color:var(--line)] hover:text-brand"
                 }`}
+                style={
+                  active
+                    ? { background: "linear-gradient(135deg, var(--menu-active-start), var(--menu-active-end))" }
+                    : {
+                        background: "var(--menu-item-bg)",
+                        color: "var(--menu-item-text)",
+                        boxShadow: "0 6px 18px rgba(15,23,42,0.05)",
+                      }
+                }
               >
                 <Icon className="h-4 w-4 shrink-0" />
                 <span>{label}</span>

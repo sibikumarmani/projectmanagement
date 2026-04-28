@@ -104,31 +104,31 @@ export function RiskForm({
     <form className="grid gap-4 md:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Risk No</span>
-        <input {...register("riskNo")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0" />
+        <input {...register("riskNo")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0" />
         <span className="mt-2 block text-xs text-rose-600">{errors.riskNo?.message}</span>
       </label>
 
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Owner</span>
-        <input {...register("owner")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0" />
+        <input {...register("owner")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0" />
         <span className="mt-2 block text-xs text-rose-600">{errors.owner?.message}</span>
       </label>
 
       <label className="block md:col-span-2">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Title</span>
-        <input {...register("title")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0" />
+        <input {...register("title")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0" />
         <span className="mt-2 block text-xs text-rose-600">{errors.title?.message}</span>
       </label>
 
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Category</span>
-        <input {...register("category")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0" />
+        <input {...register("category")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0" />
         <span className="mt-2 block text-xs text-rose-600">{errors.category?.message}</span>
       </label>
 
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Status</span>
-        <select {...register("status")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0">
+        <select {...register("status")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0">
           {statusOptions.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
@@ -146,7 +146,7 @@ export function RiskForm({
               onProjectChange?.(event.target.value);
             },
           })}
-          className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0"
+          className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0"
         >
           <option value="">Select a project</option>
           {projectOptions.map((option) => (
@@ -162,7 +162,7 @@ export function RiskForm({
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Activity</span>
         <select
           {...register("activityId")}
-          className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0"
+          className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0"
           disabled={!selectedProjectId}
         >
           <option value="">{selectedProjectId ? "Select an activity" : "Select a project first"}</option>
@@ -179,7 +179,7 @@ export function RiskForm({
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Probability</span>
         <input
           {...register("probability", { valueAsNumber: true })}
-          className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0"
+          className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0"
           max={5}
           min={1}
           type="number"
@@ -191,7 +191,7 @@ export function RiskForm({
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Impact</span>
         <input
           {...register("impact", { valueAsNumber: true })}
-          className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0"
+          className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0"
           max={5}
           min={1}
           type="number"
@@ -202,7 +202,7 @@ export function RiskForm({
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Severity</span>
         <input
-          className="w-full rounded-2xl border border-line bg-slate-50 px-4 py-3 text-slate-500 outline-none ring-0"
+          className="w-full rounded-2xl border border-line bg-[color:var(--surface-muted)] px-4 py-3 text-[color:var(--foreground-subtle)] outline-none ring-0"
           readOnly
           value={Number.isFinite(severity) ? severity : 0}
         />
@@ -212,7 +212,7 @@ export function RiskForm({
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Target Date</span>
         <input
           {...register("targetDate")}
-          className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0"
+          className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0"
           type="date"
         />
         <span className="mt-2 block text-xs text-rose-600">{errors.targetDate?.message}</span>
@@ -222,7 +222,7 @@ export function RiskForm({
 
       <div className="md:col-span-2 flex items-center justify-end gap-3 border-t border-line pt-4">
         <button
-          className="rounded-full border border-line bg-white/70 px-5 py-3 text-sm font-semibold text-slate-700"
+          className="rounded-full border border-line bg-[color:var(--surface-soft)] px-5 py-3 text-sm font-semibold text-[color:var(--foreground)]"
           onClick={onCancel}
           type="button"
         >

@@ -227,7 +227,7 @@ export default function RisksPage() {
         {error ? <p className="mb-4 rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</p> : null}
 
         {isLoading ? (
-          <div className="rounded-[22px] border border-line bg-white/35 px-4 py-8 text-sm text-slate-600">Loading risks...</div>
+          <div className="rounded-[22px] border border-line bg-[color:var(--surface-soft)] px-4 py-8 text-sm text-[color:var(--foreground-muted)]">Loading risks...</div>
         ) : (
           <DataTable
             rows={risks}
@@ -240,7 +240,7 @@ export default function RisksPage() {
               {
                 key: "status",
                 header: "Status",
-                render: (row) => <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold">{formatStatus(row.status)}</span>,
+                render: (row) => <span className="rounded-full bg-[color:var(--surface-raised)] px-3 py-1 text-xs font-semibold">{formatStatus(row.status)}</span>,
               },
               { key: "targetDate", header: "Target" },
               {
@@ -248,7 +248,7 @@ export default function RisksPage() {
                 header: "Actions",
                 render: (row) => (
                   <button
-                    className="rounded-full border border-line bg-white px-3 py-2 text-xs font-semibold text-brand-strong"
+                    className="rounded-full border border-line bg-[color:var(--surface-raised)] px-3 py-2 text-xs font-semibold text-brand-strong"
                     onClick={() => openEditModal(row)}
                     type="button"
                   >

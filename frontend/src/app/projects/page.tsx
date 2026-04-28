@@ -232,26 +232,26 @@ export default function ProjectsPage() {
           <label className="block">
             <span className="mb-2 block text-sm font-semibold text-brand-strong">Search Projects</span>
             <input
-              className="w-full rounded-2xl border border-line bg-white px-4 py-3 text-sm outline-none"
+              className="w-full rounded-2xl border border-line bg-[color:var(--surface-raised)] px-4 py-3 text-sm outline-none"
               onChange={(event) => setSearchTerm(event.target.value)}
               placeholder="Search by code, name, client, manager, or status"
               type="search"
               value={searchTerm}
             />
           </label>
-          <div className="rounded-[22px] border border-line bg-white/70 px-4 py-3">
+          <div className="rounded-[22px] border border-line bg-[color:var(--surface-soft)] px-4 py-3">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand">Visible Projects</p>
             <p className="mt-2 text-3xl font-semibold text-brand-strong">{filteredProjects.length}</p>
-            <p className="mt-1 text-sm text-slate-600">Double-click a project card to open the full edit page.</p>
+            <p className="mt-1 text-sm text-[color:var(--foreground-muted)]">Double-click a project card to open the full edit page.</p>
           </div>
         </div>
 
         {error ? <p className="mb-4 rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</p> : null}
 
         {isLoading ? (
-          <div className="rounded-[22px] border border-line bg-white/35 px-4 py-8 text-sm text-slate-600">Loading projects...</div>
+          <div className="rounded-[22px] border border-line bg-[color:var(--surface-soft)] px-4 py-8 text-sm text-[color:var(--foreground-muted)]">Loading projects...</div>
         ) : filteredProjects.length === 0 ? (
-          <div className="rounded-[22px] border border-dashed border-line bg-white/50 px-4 py-10 text-sm text-slate-600">
+          <div className="rounded-[22px] border border-dashed border-line bg-[color:var(--surface-soft)] px-4 py-10 text-sm text-[color:var(--foreground-muted)]">
             No projects matched your search.
           </div>
         ) : (
@@ -290,7 +290,7 @@ export default function ProjectsPage() {
                 key: "status",
                 header: "Status",
                 render: (project) => (
-                  <span className="inline-flex rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-700 shadow-[0_6px_14px_rgba(24,50,71,0.08)]">
+                  <span className="inline-flex rounded-full bg-[color:var(--surface-raised)] px-3 py-1 text-xs font-semibold text-[color:var(--foreground)] shadow-[0_6px_14px_rgba(24,50,71,0.08)]">
                     {formatStatus(project.status)}
                   </span>
                 ),
@@ -335,7 +335,7 @@ export default function ProjectsPage() {
           <label className="block">
             <span className="mb-2 block text-sm font-semibold text-brand-strong">Project Code</span>
             <input
-              className="w-full rounded-2xl border border-line bg-white px-4 py-3 text-sm outline-none"
+              className="w-full rounded-2xl border border-line bg-[color:var(--surface-raised)] px-4 py-3 text-sm outline-none"
               onChange={(event) => setProjectDraft((current) => ({ ...current, projectCode: event.target.value }))}
               value={projectDraft.projectCode}
             />
@@ -343,7 +343,7 @@ export default function ProjectsPage() {
           <label className="block">
             <span className="mb-2 block text-sm font-semibold text-brand-strong">Client</span>
             <input
-              className="w-full rounded-2xl border border-line bg-white px-4 py-3 text-sm outline-none"
+              className="w-full rounded-2xl border border-line bg-[color:var(--surface-raised)] px-4 py-3 text-sm outline-none"
               onChange={(event) => setProjectDraft((current) => ({ ...current, clientName: event.target.value }))}
               value={projectDraft.clientName}
             />
@@ -351,7 +351,7 @@ export default function ProjectsPage() {
           <label className="block md:col-span-2">
             <span className="mb-2 block text-sm font-semibold text-brand-strong">Project Name</span>
             <input
-              className="w-full rounded-2xl border border-line bg-white px-4 py-3 text-sm outline-none"
+              className="w-full rounded-2xl border border-line bg-[color:var(--surface-raised)] px-4 py-3 text-sm outline-none"
               onChange={(event) => setProjectDraft((current) => ({ ...current, projectName: event.target.value }))}
               value={projectDraft.projectName}
             />
@@ -359,7 +359,7 @@ export default function ProjectsPage() {
           <label className="block">
             <span className="mb-2 block text-sm font-semibold text-brand-strong">Project Manager</span>
             <input
-              className="w-full rounded-2xl border border-line bg-white px-4 py-3 text-sm outline-none"
+              className="w-full rounded-2xl border border-line bg-[color:var(--surface-raised)] px-4 py-3 text-sm outline-none"
               onChange={(event) => setProjectDraft((current) => ({ ...current, projectManager: event.target.value }))}
               value={projectDraft.projectManager}
             />
@@ -367,7 +367,7 @@ export default function ProjectsPage() {
           <label className="block">
             <span className="mb-2 block text-sm font-semibold text-brand-strong">Budget Amount</span>
             <input
-              className="w-full rounded-2xl border border-line bg-white px-4 py-3 text-sm outline-none"
+              className="w-full rounded-2xl border border-line bg-[color:var(--surface-raised)] px-4 py-3 text-sm outline-none"
               min={0}
               onChange={(event) => setProjectDraft((current) => ({ ...current, budgetAmount: Number(event.target.value) }))}
               step="0.01"
@@ -378,7 +378,7 @@ export default function ProjectsPage() {
           <label className="block">
             <span className="mb-2 block text-sm font-semibold text-brand-strong">Start Date</span>
             <input
-              className="w-full rounded-2xl border border-line bg-white px-4 py-3 text-sm outline-none"
+              className="w-full rounded-2xl border border-line bg-[color:var(--surface-raised)] px-4 py-3 text-sm outline-none"
               onChange={(event) => setProjectDraft((current) => ({ ...current, startDate: event.target.value }))}
               type="date"
               value={projectDraft.startDate}
@@ -387,7 +387,7 @@ export default function ProjectsPage() {
           <label className="block">
             <span className="mb-2 block text-sm font-semibold text-brand-strong">End Date</span>
             <input
-              className="w-full rounded-2xl border border-line bg-white px-4 py-3 text-sm outline-none"
+              className="w-full rounded-2xl border border-line bg-[color:var(--surface-raised)] px-4 py-3 text-sm outline-none"
               onChange={(event) => setProjectDraft((current) => ({ ...current, endDate: event.target.value }))}
               type="date"
               value={projectDraft.endDate}
@@ -396,7 +396,7 @@ export default function ProjectsPage() {
         </div>
 
         <div className="mt-6 flex justify-end gap-3">
-          <button className="rounded-full border border-line px-5 py-3 text-sm font-semibold text-slate-700" onClick={closeAddProjectModal} type="button">
+          <button className="rounded-full border border-line px-5 py-3 text-sm font-semibold text-[color:var(--foreground)]" onClick={closeAddProjectModal} type="button">
             Cancel
           </button>
           <button

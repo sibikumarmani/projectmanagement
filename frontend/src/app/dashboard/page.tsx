@@ -113,7 +113,7 @@ export default function DashboardPage() {
                   key: "status",
                   header: "Status",
                   render: (row) => (
-                    <span className="inline-flex rounded-full bg-white px-3 py-1 text-xs font-semibold text-brand-strong shadow-[0_6px_14px_rgba(24,50,71,0.08)]">
+                    <span className="inline-flex rounded-full bg-[color:var(--surface-raised)] px-3 py-1 text-xs font-semibold text-brand-strong shadow-[0_6px_14px_rgba(24,50,71,0.08)]">
                       {row.status}
                     </span>
                   ),
@@ -129,15 +129,15 @@ export default function DashboardPage() {
           <SectionCard title="Top risks" eyebrow="Attention List">
             <div className="grid gap-4">
               {(dashboard?.risks ?? []).map((risk) => (
-                <div key={risk.id} className="rounded-none border border-line bg-white/70 p-5 shadow-[0_10px_24px_rgba(24,50,71,0.06)]">
+                <div key={risk.id} className="rounded-none border border-line bg-[color:var(--surface-soft)] p-5 shadow-[0_10px_24px_rgba(24,50,71,0.06)]">
                   <div className="mb-3 flex items-start justify-between gap-4">
                     <p className="text-sm font-semibold leading-6 text-brand-strong">{risk.title}</p>
                     <span className="shrink-0 rounded-full bg-rose-50 px-3 py-1 text-xs font-semibold text-rose-700">
                       Severity {risk.severity}
                     </span>
                   </div>
-                  <p className="text-sm text-slate-500">{risk.category}</p>
-                  <p className="mt-2 text-sm text-slate-600">Owner: {risk.owner}</p>
+                  <p className="text-sm text-[color:var(--foreground-subtle)]">{risk.category}</p>
+                  <p className="mt-2 text-sm text-[color:var(--foreground-muted)]">Owner: {risk.owner}</p>
                 </div>
               ))}
             </div>

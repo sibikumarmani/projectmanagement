@@ -88,7 +88,7 @@ export function EmployeeAllocationForm({
     <form className="grid gap-4 md:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Employee</span>
-        <select {...register("userId")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0">
+        <select {...register("userId")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0">
           <option value="">Select an employee</option>
           {employeeOptions.map((option) => (
             <option key={option.value} value={option.value}>
@@ -107,7 +107,7 @@ export function EmployeeAllocationForm({
               onProjectChange?.(event.target.value);
             },
           })}
-          className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0"
+          className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0"
         >
           <option value="">Select a project</option>
           {projectOptions.map((option) => (
@@ -121,7 +121,7 @@ export function EmployeeAllocationForm({
 
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Activity</span>
-        <select {...register("activityId")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0" disabled={!selectedProjectId}>
+        <select {...register("activityId")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0" disabled={!selectedProjectId}>
           <option value="">{selectedProjectId ? "Select an activity" : "Select a project first"}</option>
           {activityOptions.map((option) => (
             <option key={option.value} value={option.value}>
@@ -134,30 +134,30 @@ export function EmployeeAllocationForm({
 
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Allocation Date</span>
-        <input {...register("allocationDate")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0" type="date" />
+        <input {...register("allocationDate")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0" type="date" />
         <span className="mt-2 block text-xs text-rose-600">{errors.allocationDate?.message}</span>
       </label>
 
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Allocation %</span>
-        <input {...register("allocationPercentage", { valueAsNumber: true })} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0" type="number" min={1} max={100} />
+        <input {...register("allocationPercentage", { valueAsNumber: true })} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0" type="number" min={1} max={100} />
         <span className="mt-2 block text-xs text-rose-600">{errors.allocationPercentage?.message}</span>
       </label>
 
-      <label className="flex items-center gap-3 rounded-2xl border border-line bg-white/70 px-4 py-3">
+      <label className="flex items-center gap-3 rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3">
         <input {...register("active")} className="h-4 w-4" type="checkbox" />
         <span className="text-sm font-semibold text-brand-strong">Allocation active</span>
       </label>
 
       <label className="block md:col-span-2">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Remarks</span>
-        <textarea {...register("remarks")} className="min-h-28 w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0" />
+        <textarea {...register("remarks")} className="min-h-28 w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0" />
       </label>
 
       {error ? <p className="md:col-span-2 rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</p> : null}
 
       <div className="md:col-span-2 flex items-center justify-end gap-3 border-t border-line pt-4">
-        <button className="rounded-full border border-line bg-white/70 px-5 py-3 text-sm font-semibold text-slate-700" onClick={onCancel} type="button">
+        <button className="rounded-full border border-line bg-[color:var(--surface-soft)] px-5 py-3 text-sm font-semibold text-[color:var(--foreground)]" onClick={onCancel} type="button">
           Cancel
         </button>
         <button className="rounded-full bg-brand-strong px-5 py-3 text-sm font-semibold text-white" disabled={isSubmitting} type="submit">

@@ -66,7 +66,7 @@ function getStatusClasses(status: ReportCatalogItem["status"]) {
     return "bg-amber-50 text-amber-700";
   }
 
-  return "bg-slate-100 text-slate-600";
+  return "bg-slate-100 text-[color:var(--foreground-muted)]";
 }
 
 function formatCurrency(value: number) {
@@ -638,7 +638,7 @@ export default function ReportsPage() {
 
   function renderReportPanel() {
     if (isLoading) {
-      return <div className="rounded-[22px] border border-line bg-white/35 px-4 py-8 text-sm text-slate-600">Loading report data...</div>;
+      return <div className="rounded-[22px] border border-line bg-[color:var(--surface-soft)] px-4 py-8 text-sm text-[color:var(--foreground-muted)]">Loading report data...</div>;
     }
 
     switch (selectedReport) {
@@ -752,16 +752,16 @@ export default function ReportsPage() {
         return (
           <div className="space-y-4">
             <div className="grid gap-4 md:grid-cols-3">
-              <div className="rounded-[22px] border border-line bg-white/45 px-5 py-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Entries</p>
+              <div className="rounded-[22px] border border-line bg-[color:var(--surface-soft)] px-5 py-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--foreground-subtle)]">Entries</p>
                 <p className="mt-2 text-2xl font-semibold text-brand-strong">{timesheets.length}</p>
               </div>
-              <div className="rounded-[22px] border border-line bg-white/45 px-5 py-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Regular Hours</p>
+              <div className="rounded-[22px] border border-line bg-[color:var(--surface-soft)] px-5 py-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--foreground-subtle)]">Regular Hours</p>
                 <p className="mt-2 text-2xl font-semibold text-brand-strong">{totalRegularHours.toFixed(2)}</p>
               </div>
-              <div className="rounded-[22px] border border-line bg-white/45 px-5 py-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Overtime Hours</p>
+              <div className="rounded-[22px] border border-line bg-[color:var(--surface-soft)] px-5 py-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--foreground-subtle)]">Overtime Hours</p>
                 <p className="mt-2 text-2xl font-semibold text-brand-strong">{totalOvertimeHours.toFixed(2)}</p>
               </div>
             </div>
@@ -788,7 +788,7 @@ export default function ReportsPage() {
         );
       case "overhead-allocation":
         return (
-          <div className="rounded-[22px] border border-dashed border-line bg-white/35 px-5 py-10 text-sm text-slate-600">
+          <div className="rounded-[22px] border border-dashed border-line bg-[color:var(--surface-soft)] px-5 py-10 text-sm text-[color:var(--foreground-muted)]">
             This report menu is enabled, but its source module is not connected to the database yet.
           </div>
         );
@@ -811,7 +811,7 @@ export default function ReportsPage() {
               <label className="block">
                 <span className="mb-2 block text-sm font-semibold text-brand-strong">Choose report</span>
                 <select
-                  className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 text-sm text-slate-700 outline-none ring-0"
+                  className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 text-sm text-[color:var(--foreground)] outline-none ring-0"
                   onChange={(event) => setSelectedReport(event.target.value as ReportId)}
                   value={selectedReport}
                 >
@@ -829,7 +829,7 @@ export default function ReportsPage() {
                 <span className={`rounded-full px-3 py-1 text-xs font-semibold ${getStatusClasses(selectedReportMeta.status)}`}>
                   {formatReportStatus(selectedReportMeta.status)}
                 </span>
-                <span className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
+                <span className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--foreground-subtle)]">
                   {selectedReportMeta.records === null ? "Awaiting source module" : `${selectedReportMeta.records} records available`}
                 </span>
               </div>
@@ -839,10 +839,10 @@ export default function ReportsPage() {
 
         <SectionCard title={selectedReportMeta?.name ?? "Report data"} eyebrow="Preview">
           <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-            <p className="text-sm text-slate-600">{selectedReportMeta?.description ?? "Select a report from the menu."}</p>
+            <p className="text-sm text-[color:var(--foreground-muted)]">{selectedReportMeta?.description ?? "Select a report from the menu."}</p>
             <div className="flex flex-wrap gap-2">
               <button
-                className="rounded-full border border-line bg-white/70 px-4 py-2 text-sm font-semibold text-brand-strong shadow-sm transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-full border border-line bg-[color:var(--surface-soft)] px-4 py-2 text-sm font-semibold text-brand-strong shadow-sm transition hover:bg-[color:var(--surface-raised)] disabled:cursor-not-allowed disabled:opacity-50"
                 disabled={isLoading || !selectedReportMeta}
                 onClick={handleDownloadExcel}
                 type="button"

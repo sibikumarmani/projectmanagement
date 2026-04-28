@@ -71,7 +71,7 @@ export function WbsForm({
           <span className="mb-2 block text-sm font-semibold text-brand-strong">{field.label}</span>
           <input
             {...register(field.name as keyof WbsFormValues, field.type === "number" ? { valueAsNumber: true } : undefined)}
-            className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0"
+            className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0"
             min={field.type === "number" ? 0 : undefined}
             step={field.type === "number" ? "0.01" : undefined}
             type={field.type}
@@ -84,7 +84,7 @@ export function WbsForm({
 
       <div className="md:col-span-2 flex items-center justify-end gap-3 border-t border-line pt-4">
         <button
-          className="rounded-full border border-line bg-white/70 px-5 py-3 text-sm font-semibold text-slate-700"
+          className="rounded-full border border-line bg-[color:var(--surface-soft)] px-5 py-3 text-sm font-semibold text-[color:var(--foreground)]"
           onClick={onCancel}
           type="button"
         >

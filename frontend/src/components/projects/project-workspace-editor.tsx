@@ -253,7 +253,7 @@ function statusTone(status: string) {
   if (normalized.includes("progress")) {
     return "bg-amber-500";
   }
-  return "bg-slate-500";
+  return "bg-[color:var(--surface-muted)]0";
 }
 
 function toProjectRecord(project: Omit<ProjectRecord, "id"> & { id: number | string }): ProjectRecord {
@@ -373,7 +373,7 @@ type EmbeddedTimelineRow = {
 type EmbeddedZoomMode = "day" | "month" | "year";
 
 function TextInput(props: InputHTMLAttributes<HTMLInputElement>) {
-  return <input {...props} className={`w-full rounded-2xl border border-line bg-white px-3 py-2 text-sm outline-none ${props.className ?? ""}`} />;
+  return <input {...props} className={`w-full rounded-2xl border border-line bg-[color:var(--surface-raised)] px-3 py-2 text-sm outline-none ${props.className ?? ""}`} />;
 }
 
 function hasNextSiblingAtLevel(rows: DraftWbs[], startIndex: number, targetLevel: number) {
@@ -950,7 +950,7 @@ export function ProjectWorkspaceEditor({ projectId }: ProjectWorkspaceEditorProp
         eyebrow="Full Edit"
         action={
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Link className="rounded-full border border-line bg-white px-5 py-3 text-sm font-semibold text-slate-700" href="/projects">
+            <Link className="rounded-full border border-line bg-[color:var(--surface-raised)] px-5 py-3 text-sm font-semibold text-[color:var(--foreground)]" href="/projects">
               Back to Projects
             </Link>
             <button
@@ -969,7 +969,7 @@ export function ProjectWorkspaceEditor({ projectId }: ProjectWorkspaceEditorProp
         {saveSuccess ? <p className="mb-4 rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{saveSuccess}</p> : null}
 
         {isWorkspaceLoading ? (
-          <div className="rounded-[22px] border border-line bg-white/35 px-4 py-8 text-sm text-slate-600">Loading workspace...</div>
+          <div className="rounded-[22px] border border-line bg-[color:var(--surface-soft)] px-4 py-8 text-sm text-[color:var(--foreground-muted)]">Loading workspace...</div>
         ) : (
           <>
             <div className="mb-6 rounded-[24px] border border-line bg-brand-strong/8 p-5">
@@ -977,12 +977,12 @@ export function ProjectWorkspaceEditor({ projectId }: ProjectWorkspaceEditorProp
               <div className="mt-2 flex flex-col gap-2 lg:flex-row lg:items-end lg:justify-between">
                 <div>
                   <h2 className="text-2xl font-semibold text-brand-strong">{projectDisplayName}</h2>
-                  <p className="mt-1 text-sm text-slate-600">
+                  <p className="mt-1 text-sm text-[color:var(--foreground-muted)]">
                     Code: {projectDisplayCode}
                     {projectDraft.clientName.trim() ? ` • Client: ${projectDraft.clientName.trim()}` : ""}
                   </p>
                 </div>
-                <p className="text-sm text-slate-600">{projectId ? "Editing existing project" : "Creating new project"}</p>
+                <p className="text-sm text-[color:var(--foreground-muted)]">{projectId ? "Editing existing project" : "Creating new project"}</p>
               </div>
             </div>
 
@@ -1029,7 +1029,7 @@ export function ProjectWorkspaceEditor({ projectId }: ProjectWorkspaceEditorProp
                   <button
                     key={tab.key}
                     className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-                      activeTab === tab.key ? "bg-brand-strong text-white" : "border border-line bg-white text-slate-700"
+                      activeTab === tab.key ? "bg-brand-strong text-white" : "border border-line bg-[color:var(--surface-raised)] text-[color:var(--foreground)]"
                     }`}
                     onClick={() => setActiveTab(tab.key)}
                     type="button"
@@ -1042,17 +1042,17 @@ export function ProjectWorkspaceEditor({ projectId }: ProjectWorkspaceEditorProp
               {activeTab === "wbs" ? (
                 <div className="space-y-4">
                   <div className="flex justify-end">
-                    <button className="rounded-full border border-line bg-white px-4 py-2 text-sm font-semibold text-brand-strong" onClick={() => openWbsPopup()} type="button">
+                    <button className="rounded-full border border-line bg-[color:var(--surface-raised)] px-4 py-2 text-sm font-semibold text-brand-strong" onClick={() => openWbsPopup()} type="button">
                       Add WBS
                     </button>
                   </div>
                   {wbsDraft.length === 0 ? (
-                    <div className="rounded-[22px] border border-dashed border-line bg-white/50 px-4 py-10 text-sm text-slate-600">
+                    <div className="rounded-[22px] border border-dashed border-line bg-[color:var(--surface-soft)] px-4 py-10 text-sm text-[color:var(--foreground-muted)]">
                       No WBS records yet. Use Add WBS to create the project structure.
                     </div>
                   ) : (
                     <div className="overflow-hidden rounded-[22px] border border-line">
-                      <div className="grid min-w-[920px] grid-cols-[minmax(320px,2.2fr)_80px_100px_140px_140px_90px] bg-white/70 text-[11px] uppercase tracking-[0.18em] text-slate-500">
+                      <div className="grid min-w-[920px] grid-cols-[minmax(320px,2.2fr)_80px_100px_140px_140px_90px] bg-[color:var(--surface-soft)] text-[11px] uppercase tracking-[0.18em] text-[color:var(--foreground-subtle)]">
                         <div className="px-4 py-3 font-semibold">WBS Hierarchy</div>
                         <div className="px-4 py-3 font-semibold">Level</div>
                         <div className="px-4 py-3 font-semibold">Progress</div>
@@ -1060,9 +1060,9 @@ export function ProjectWorkspaceEditor({ projectId }: ProjectWorkspaceEditorProp
                         <div className="px-4 py-3 font-semibold">Actual</div>
                         <div className="px-4 py-3 font-semibold">Action</div>
                       </div>
-                      <div className="divide-y divide-line bg-white/35">
+                      <div className="divide-y divide-line bg-[color:var(--surface-soft)]">
                         {wbsTreeRows.map((row) => (
-                          <div key={row.clientKey} className="grid min-w-[920px] grid-cols-[minmax(320px,2.2fr)_80px_100px_140px_140px_90px] items-center text-sm text-slate-700 hover:bg-white/70">
+                          <div key={row.clientKey} className="grid min-w-[920px] grid-cols-[minmax(320px,2.2fr)_80px_100px_140px_140px_90px] items-center text-sm text-[color:var(--foreground)] hover:bg-[color:var(--surface-soft)]">
                             <div className="px-4 py-3">
                               <div className="flex min-h-12 items-center">
                                 {Array.from({ length: Math.max(0, row.levelNo - 1) }, (_, levelIndex) => {
@@ -1077,7 +1077,7 @@ export function ProjectWorkspaceEditor({ projectId }: ProjectWorkspaceEditorProp
                                   <span className={`absolute left-1/2 top-0 w-px -translate-x-1/2 bg-slate-300 ${row.levelNo > 1 ? "h-1/2" : "h-0"}`} />
                                   <span className={`absolute left-1/2 top-1/2 h-px -translate-y-1/2 bg-slate-300 ${row.levelNo > 1 ? "w-6" : "w-3"}`} />
                                   {row.hasNextSibling ? <span className="absolute left-1/2 top-1/2 h-1/2 w-px -translate-x-1/2 bg-slate-300" /> : null}
-                                  <span className="absolute right-0 top-1/2 h-3 w-3 -translate-y-1/2 rounded-full border-2 border-brand-strong bg-white" />
+                                  <span className="absolute right-0 top-1/2 h-3 w-3 -translate-y-1/2 rounded-full border-2 border-brand-strong bg-[color:var(--surface-raised)]" />
                                 </div>
                                 <div className="min-w-0">
                                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand">{row.wbsCode}</p>
@@ -1091,7 +1091,7 @@ export function ProjectWorkspaceEditor({ projectId }: ProjectWorkspaceEditorProp
                             <div className="px-4 py-3">{formatCurrency(row.actualAmount)}</div>
                             <div className="px-4 py-3">
                               <button
-                                className="rounded-full border border-line bg-white px-3 py-2 text-xs font-semibold text-brand-strong"
+                                className="rounded-full border border-line bg-[color:var(--surface-raised)] px-3 py-2 text-xs font-semibold text-brand-strong"
                                 onClick={() => openWbsPopup(row)}
                                 type="button"
                               >
@@ -1109,12 +1109,12 @@ export function ProjectWorkspaceEditor({ projectId }: ProjectWorkspaceEditorProp
               {activeTab === "activities" ? (
                 <div className="space-y-4">
                   <div className="flex justify-end">
-                    <button className="rounded-full border border-line bg-white px-4 py-2 text-sm font-semibold text-brand-strong" onClick={() => openActivityPopup()} type="button">
+                    <button className="rounded-full border border-line bg-[color:var(--surface-raised)] px-4 py-2 text-sm font-semibold text-brand-strong" onClick={() => openActivityPopup()} type="button">
                       Add Activity
                     </button>
                   </div>
                   {activitiesDraft.length === 0 ? (
-                    <div className="rounded-[22px] border border-dashed border-line bg-white/50 px-4 py-10 text-sm text-slate-600">
+                    <div className="rounded-[22px] border border-dashed border-line bg-[color:var(--surface-soft)] px-4 py-10 text-sm text-[color:var(--foreground-muted)]">
                       No activities yet. Add activity records in a popup and save them together with the project.
                     </div>
                   ) : (
@@ -1135,14 +1135,14 @@ export function ProjectWorkspaceEditor({ projectId }: ProjectWorkspaceEditorProp
                         {
                           key: "status",
                           header: "Status",
-                          render: (row) => <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold">{row.status}</span>,
+                          render: (row) => <span className="rounded-full bg-[color:var(--surface-raised)] px-3 py-1 text-xs font-semibold">{row.status}</span>,
                         },
                         {
                           key: "actions",
                           header: "Actions",
                           render: (row) => (
                             <button
-                              className="rounded-full border border-line bg-white px-3 py-2 text-xs font-semibold text-brand-strong"
+                              className="rounded-full border border-line bg-[color:var(--surface-raised)] px-3 py-2 text-xs font-semibold text-brand-strong"
                               onClick={() => openActivityPopup(row)}
                               type="button"
                             >
@@ -1160,12 +1160,12 @@ export function ProjectWorkspaceEditor({ projectId }: ProjectWorkspaceEditorProp
               {activeTab === "milestones" ? (
                 <div className="space-y-4">
                   <div className="flex justify-end">
-                    <button className="rounded-full border border-line bg-white px-4 py-2 text-sm font-semibold text-brand-strong" onClick={() => openMilestonePopup()} type="button">
+                    <button className="rounded-full border border-line bg-[color:var(--surface-raised)] px-4 py-2 text-sm font-semibold text-brand-strong" onClick={() => openMilestonePopup()} type="button">
                       Add Milestone
                     </button>
                   </div>
                   {milestonesDraft.length === 0 ? (
-                    <div className="rounded-[22px] border border-dashed border-line bg-white/50 px-4 py-10 text-sm text-slate-600">
+                    <div className="rounded-[22px] border border-dashed border-line bg-[color:var(--surface-soft)] px-4 py-10 text-sm text-[color:var(--foreground-muted)]">
                       No milestones yet. Add milestone records from the popup form.
                     </div>
                   ) : (
@@ -1186,7 +1186,7 @@ export function ProjectWorkspaceEditor({ projectId }: ProjectWorkspaceEditorProp
                           header: "Actions",
                           render: (row) => (
                             <button
-                              className="rounded-full border border-line bg-white px-3 py-2 text-xs font-semibold text-brand-strong"
+                              className="rounded-full border border-line bg-[color:var(--surface-raised)] px-3 py-2 text-xs font-semibold text-brand-strong"
                               onClick={() => openMilestonePopup(row)}
                               type="button"
                             >
@@ -1204,54 +1204,54 @@ export function ProjectWorkspaceEditor({ projectId }: ProjectWorkspaceEditorProp
               {activeTab === "gantt" ? (
                 <div className="space-y-6">
                   {!embeddedTimelineFrame || embeddedTimelineRows.length === 0 ? (
-                    <div className="rounded-[22px] border border-dashed border-line bg-white/50 px-4 py-10 text-sm text-slate-600">
+                    <div className="rounded-[22px] border border-dashed border-line bg-[color:var(--surface-soft)] px-4 py-10 text-sm text-[color:var(--foreground-muted)]">
                       Add WBS, activities, and milestones with planned dates to populate the Gantt chart.
                     </div>
                   ) : (
                     <div className="space-y-4">
                       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
-                        <div className="rounded-[24px] border border-line bg-white/70 p-5">
+                        <div className="rounded-[24px] border border-line bg-[color:var(--surface-soft)] p-5">
                           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand">Project Timeline</p>
                           <h3 className="mt-2 text-xl font-semibold text-brand-strong">
                             {projectDraft.projectCode || "Project"} timeline
                           </h3>
-                          <p className="mt-2 text-sm text-slate-600">
+                          <p className="mt-2 text-sm text-[color:var(--foreground-muted)]">
                             {embeddedTimelineFrame.title}
                           </p>
                         </div>
                         <div className="grid grid-cols-1 gap-2 text-center sm:grid-cols-3">
-                          <div className="rounded-2xl border border-line bg-white/50 px-4 py-3">
-                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">WBS</p>
+                          <div className="rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3">
+                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--foreground-subtle)]">WBS</p>
                             <p className="mt-1 text-xl font-semibold text-brand-strong">{wbsDraft.length}</p>
                           </div>
-                          <div className="rounded-2xl border border-line bg-white/50 px-4 py-3">
-                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Activities</p>
+                          <div className="rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3">
+                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--foreground-subtle)]">Activities</p>
                             <p className="mt-1 text-xl font-semibold text-brand-strong">{activitiesDraft.length}</p>
                           </div>
-                          <div className="rounded-2xl border border-line bg-white/50 px-4 py-3">
-                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Milestones</p>
+                          <div className="rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3">
+                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--foreground-subtle)]">Milestones</p>
                             <p className="mt-1 text-xl font-semibold text-brand-strong">{milestonesDraft.length}</p>
                           </div>
                         </div>
                       </div>
 
-                      <div className="overflow-hidden rounded-[24px] border border-line bg-white/40">
-                        <div className="border-b border-line bg-white/70 px-4 py-3">
+                      <div className="overflow-hidden rounded-[24px] border border-line bg-[color:var(--surface-soft)]">
+                        <div className="border-b border-line bg-[color:var(--surface-soft)] px-4 py-3">
                           <div>
-                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--foreground-subtle)]">
                               Project Gantt view aligned with WBS, activities, and milestones saved in this workspace.
                             </p>
-                            <p className="mt-1 text-xs text-slate-500">
+                            <p className="mt-1 text-xs text-[color:var(--foreground-subtle)]">
                               Day shows hours, month shows days, and year shows months. Use previous and next to move the visible window.
                             </p>
                           </div>
 
                           <div className="mt-3 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-                            <div className="inline-flex flex-wrap rounded-full border border-line bg-white/80 p-1">
+                            <div className="inline-flex flex-wrap rounded-full border border-line bg-[color:var(--surface-raised)] p-1">
                               {(["day", "month", "year"] as EmbeddedZoomMode[]).map((mode) => (
                                 <button
                                   className={`rounded-full px-3 py-1.5 text-sm font-semibold transition ${
-                                    embeddedZoomMode === mode ? "bg-brand text-white" : "text-slate-600 hover:bg-slate-100"
+                                    embeddedZoomMode === mode ? "bg-brand text-white" : "text-[color:var(--foreground-muted)] hover:bg-slate-100"
                                   }`}
                                   key={mode}
                                   onClick={() => setEmbeddedZoomMode(mode)}
@@ -1262,9 +1262,9 @@ export function ProjectWorkspaceEditor({ projectId }: ProjectWorkspaceEditorProp
                               ))}
                             </div>
 
-                            <div className="inline-flex flex-wrap items-center rounded-full border border-line bg-white/80 p-1">
+                            <div className="inline-flex flex-wrap items-center rounded-full border border-line bg-[color:var(--surface-raised)] p-1">
                               <button
-                                className="rounded-full px-3 py-1.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-100"
+                                className="rounded-full px-3 py-1.5 text-sm font-semibold text-[color:var(--foreground-muted)] transition hover:bg-slate-100"
                                 onClick={handleEmbeddedPrevious}
                                 type="button"
                               >
@@ -1272,7 +1272,7 @@ export function ProjectWorkspaceEditor({ projectId }: ProjectWorkspaceEditorProp
                               </button>
                               <div className="flex items-center px-3 text-sm font-semibold text-brand-strong">{embeddedTimelineFrame.title}</div>
                               <button
-                                className="rounded-full px-3 py-1.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-100"
+                                className="rounded-full px-3 py-1.5 text-sm font-semibold text-[color:var(--foreground-muted)] transition hover:bg-slate-100"
                                 onClick={handleEmbeddedNext}
                                 type="button"
                               >
@@ -1282,14 +1282,14 @@ export function ProjectWorkspaceEditor({ projectId }: ProjectWorkspaceEditorProp
                           </div>
                         </div>
 
-                        <div className="grid min-w-[980px] grid-cols-[280px_minmax(620px,1fr)] border-b border-line bg-white/70 text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 sm:grid-cols-[320px_minmax(620px,1fr)]">
+                        <div className="grid min-w-[980px] grid-cols-[280px_minmax(620px,1fr)] border-b border-line bg-[color:var(--surface-soft)] text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--foreground-subtle)] sm:grid-cols-[320px_minmax(620px,1fr)]">
                           <div className="px-4 py-3">Task</div>
                           <div className="overflow-x-auto px-4 py-3">
-                            <div className="relative rounded-2xl border border-line/70 bg-white/75 shadow-[inset_0_1px_0_rgba(255,255,255,0.6)]" style={{ width: `${embeddedTimelineFrame.width}px` }}>
-                              <div className="relative h-9 border-b border-line/70 bg-slate-50/80">
+                            <div className="relative rounded-2xl border border-line/70 bg-[color:var(--surface-soft)] shadow-[inset_0_1px_0_rgba(255,255,255,0.6)]" style={{ width: `${embeddedTimelineFrame.width}px` }}>
+                              <div className="surface-muted relative h-9 border-b border-line/70">
                                 {embeddedMajorBands.map((band) => (
                                   <div
-                                    className="absolute inset-y-0 flex items-center border-r border-line/70 px-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500"
+                                    className="absolute inset-y-0 flex items-center border-r border-line/70 px-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--foreground-subtle)]"
                                     key={band.key}
                                     style={{ left: `${band.left}px`, width: `${band.width}px` }}
                                   >
@@ -1301,12 +1301,12 @@ export function ProjectWorkspaceEditor({ projectId }: ProjectWorkspaceEditorProp
                               <div className="relative h-12">
                                 {embeddedTimelineFrame.columns.map((column, index) => (
                                   <div
-                                    className={`absolute inset-y-0 border-r border-line/60 ${column.shaded ? "bg-amber-50/80" : "bg-white/80"}`}
+                                    className={`absolute inset-y-0 border-r border-line/60 ${column.shaded ? "bg-amber-50/80" : "bg-[color:var(--surface-raised)]"}`}
                                     key={column.key}
                                     style={{ left: `${index * embeddedTimelineFrame.columnWidth}px`, width: `${embeddedTimelineFrame.columnWidth}px` }}
                                   >
                                     <div className="flex h-full flex-col items-center justify-center">
-                                      <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400">{column.minorTop}</span>
+                                      <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[color:var(--foreground-subtle)]">{column.minorTop}</span>
                                       <span className="mt-1 text-xs font-semibold text-brand-strong">{column.minorBottom}</span>
                                     </div>
                                   </div>
@@ -1329,7 +1329,7 @@ export function ProjectWorkspaceEditor({ projectId }: ProjectWorkspaceEditorProp
 
                             return (
                               <div
-                                className={`grid min-w-[980px] grid-cols-[280px_minmax(620px,1fr)] border-b border-line last:border-b-0 sm:grid-cols-[320px_minmax(620px,1fr)] ${row.type === "wbs" ? "bg-slate-50/80" : "bg-white/35"}`}
+                                className={`grid min-w-[980px] grid-cols-[280px_minmax(620px,1fr)] border-b border-line last:border-b-0 sm:grid-cols-[320px_minmax(620px,1fr)] ${row.type === "wbs" ? "surface-muted" : "bg-[color:var(--surface-soft)]"}`}
                                 key={row.id}
                               >
                                 <div className="px-4 py-3">
@@ -1337,9 +1337,9 @@ export function ProjectWorkspaceEditor({ projectId }: ProjectWorkspaceEditorProp
                                     <span className={`mt-1 h-2.5 w-2.5 rounded-full ${row.type === "wbs" ? "bg-brand" : statusTone(row.status)}`} />
                                     <div>
                                       <p className="font-semibold text-brand-strong">
-                                        {row.code} <span className="font-normal text-slate-500">{row.name}</span>
+                                        {row.code} <span className="font-normal text-[color:var(--foreground-subtle)]">{row.name}</span>
                                       </p>
-                                      <p className="mt-1 text-xs text-slate-500">
+                                      <p className="mt-1 text-xs text-[color:var(--foreground-subtle)]">
                                         {row.status}
                                         {row.owner ? ` - ${row.owner}` : ""} - {row.progressPercent}%
                                       </p>
@@ -1348,11 +1348,11 @@ export function ProjectWorkspaceEditor({ projectId }: ProjectWorkspaceEditorProp
                                 </div>
 
                                 <div className="overflow-x-auto px-4 py-4">
-                                  <div className="relative min-h-[62px] rounded-2xl border border-line/60 bg-white/40" style={{ width: `${embeddedTimelineFrame.width}px` }}>
+                                  <div className="relative min-h-[62px] rounded-2xl border border-line/60 bg-[color:var(--surface-soft)]" style={{ width: `${embeddedTimelineFrame.width}px` }}>
                                     {embeddedTimelineFrame.columns.map((column, index) => (
                                       <span
                                         aria-hidden="true"
-                                        className={`absolute inset-y-0 border-r border-line/50 ${column.shaded ? "bg-amber-50/60" : "bg-white/10"}`}
+                                        className={`absolute inset-y-0 border-r border-line/50 ${column.shaded ? "bg-amber-50/60" : "bg-transparent"}`}
                                         key={`${row.id}-${column.key}`}
                                         style={{ left: `${index * embeddedTimelineFrame.columnWidth}px`, width: `${embeddedTimelineFrame.columnWidth}px` }}
                                       />
@@ -1373,14 +1373,14 @@ export function ProjectWorkspaceEditor({ projectId }: ProjectWorkspaceEditorProp
                             <div className="grid min-w-[980px] grid-cols-[280px_minmax(620px,1fr)] bg-amber-50/50 sm:grid-cols-[320px_minmax(620px,1fr)]">
                               <div className="px-4 py-4">
                                 <p className="font-semibold text-brand-strong">Milestones</p>
-                                <p className="mt-1 text-xs text-slate-500">Planned milestone dates from this project workspace</p>
+                                <p className="mt-1 text-xs text-[color:var(--foreground-subtle)]">Planned milestone dates from this project workspace</p>
                               </div>
                               <div className="overflow-x-auto px-4 py-4">
-                                <div className="relative min-h-[82px] rounded-2xl border border-line/60 bg-white/40" style={{ width: `${embeddedTimelineFrame.width}px` }}>
+                                <div className="relative min-h-[82px] rounded-2xl border border-line/60 bg-[color:var(--surface-soft)]" style={{ width: `${embeddedTimelineFrame.width}px` }}>
                                   {embeddedTimelineFrame.columns.map((column, index) => (
                                     <span
                                       aria-hidden="true"
-                                      className={`absolute inset-y-0 border-r border-line/50 ${column.shaded ? "bg-amber-50/60" : "bg-white/10"}`}
+                                      className={`absolute inset-y-0 border-r border-line/50 ${column.shaded ? "bg-amber-50/60" : "bg-transparent"}`}
                                       key={`milestone-${column.key}`}
                                       style={{ left: `${index * embeddedTimelineFrame.columnWidth}px`, width: `${embeddedTimelineFrame.columnWidth}px` }}
                                     />

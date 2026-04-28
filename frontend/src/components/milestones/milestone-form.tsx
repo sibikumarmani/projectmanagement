@@ -64,19 +64,19 @@ export function MilestoneForm({
     <form className="grid gap-4 md:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Milestone Code</span>
-        <input {...register("milestoneCode")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0" />
+        <input {...register("milestoneCode")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0" />
         <span className="mt-2 block text-xs text-rose-600">{errors.milestoneCode?.message}</span>
       </label>
 
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Milestone Name</span>
-        <input {...register("milestoneName")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0" />
+        <input {...register("milestoneName")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0" />
         <span className="mt-2 block text-xs text-rose-600">{errors.milestoneName?.message}</span>
       </label>
 
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">WBS</span>
-        <select {...register("wbsId")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0">
+        <select {...register("wbsId")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0">
           <option value="">Project-level milestone</option>
           {wbsOptions.map((option) => (
             <option key={option.id} value={option.id}>
@@ -88,7 +88,7 @@ export function MilestoneForm({
 
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Status</span>
-        <select {...register("status")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0">
+        <select {...register("status")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0">
           {statusOptions.map((status) => (
             <option key={status} value={status}>
               {status}
@@ -100,20 +100,20 @@ export function MilestoneForm({
 
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Planned Date</span>
-        <input {...register("plannedDate")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0" type="date" />
+        <input {...register("plannedDate")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0" type="date" />
         <span className="mt-2 block text-xs text-rose-600">{errors.plannedDate?.message}</span>
       </label>
 
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Actual Date</span>
-        <input {...register("actualDate")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0" type="date" />
+        <input {...register("actualDate")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0" type="date" />
       </label>
 
       {error ? <p className="md:col-span-2 rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</p> : null}
 
       <div className="md:col-span-2 flex items-center justify-end gap-3 border-t border-line pt-4">
         <button
-          className="rounded-full border border-line bg-white/70 px-5 py-3 text-sm font-semibold text-slate-700"
+          className="rounded-full border border-line bg-[color:var(--surface-soft)] px-5 py-3 text-sm font-semibold text-[color:var(--foreground)]"
           onClick={onCancel}
           type="button"
         >

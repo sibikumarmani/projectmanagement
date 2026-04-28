@@ -99,13 +99,13 @@ export function MaterialRequestForm({
     <form className="grid gap-4 md:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Request No</span>
-        <input {...register("requestNo")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0" />
+        <input {...register("requestNo")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0" />
         <span className="mt-2 block text-xs text-rose-600">{errors.requestNo?.message}</span>
       </label>
 
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Requested By</span>
-        <input {...register("requestedBy")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0" />
+        <input {...register("requestedBy")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0" />
         <span className="mt-2 block text-xs text-rose-600">{errors.requestedBy?.message}</span>
       </label>
 
@@ -117,7 +117,7 @@ export function MaterialRequestForm({
               onProjectChange?.(event.target.value);
             },
           })}
-          className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0"
+          className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0"
         >
           <option value="">Select a project</option>
           {projectOptions.map((option) => (
@@ -133,7 +133,7 @@ export function MaterialRequestForm({
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Activity</span>
         <select
           {...register("activityId")}
-          className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0"
+          className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0"
           disabled={!selectedProjectId}
         >
           <option value="">{selectedProjectId ? "Select an activity" : "Select a project first"}</option>
@@ -148,7 +148,7 @@ export function MaterialRequestForm({
 
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Status</span>
-        <select {...register("status")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0">
+        <select {...register("status")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0">
           {statusOptions.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
@@ -162,7 +162,7 @@ export function MaterialRequestForm({
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Requested Qty</span>
         <input
           {...register("requestedQty", { valueAsNumber: true })}
-          className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0"
+          className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0"
           min={0}
           step="0.01"
           type="number"
@@ -174,7 +174,7 @@ export function MaterialRequestForm({
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Approved Qty</span>
         <input
           {...register("approvedQty", { valueAsNumber: true })}
-          className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0"
+          className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0"
           min={0}
           step="0.01"
           type="number"
@@ -186,7 +186,7 @@ export function MaterialRequestForm({
 
       <div className="md:col-span-2 flex items-center justify-end gap-3 border-t border-line pt-4">
         <button
-          className="rounded-full border border-line bg-white/70 px-5 py-3 text-sm font-semibold text-slate-700"
+          className="rounded-full border border-line bg-[color:var(--surface-soft)] px-5 py-3 text-sm font-semibold text-[color:var(--foreground)]"
           onClick={onCancel}
           type="button"
         >

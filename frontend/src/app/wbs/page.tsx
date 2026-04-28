@@ -200,7 +200,7 @@ export default function WbsPage() {
         action={
           <div className="flex flex-col gap-3 sm:flex-row">
             <select
-              className="rounded-full border border-line bg-white/70 px-4 py-3 text-sm font-semibold text-slate-700"
+              className="rounded-full border border-line bg-[color:var(--surface-soft)] px-4 py-3 text-sm font-semibold text-[color:var(--foreground)]"
               disabled={isProjectsLoading || projects.length === 0}
               onChange={(event) => setSelectedProjectId(event.target.value)}
               value={selectedProjectId}
@@ -225,7 +225,7 @@ export default function WbsPage() {
         {error ? <p className="mb-4 rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</p> : null}
 
         {isProjectsLoading || (hasValidSelectedProject && isWbsLoading) ? (
-          <div className="rounded-[22px] border border-line bg-white/35 px-4 py-8 text-sm text-slate-600">Loading WBS data...</div>
+          <div className="rounded-[22px] border border-line bg-[color:var(--surface-soft)] px-4 py-8 text-sm text-[color:var(--foreground-muted)]">Loading WBS data...</div>
         ) : (
           <DataTable
             rows={hasValidSelectedProject ? wbsRows : []}
@@ -245,7 +245,7 @@ export default function WbsPage() {
                 header: "Actions",
                 render: (row) => (
                   <button
-                    className="rounded-full border border-line bg-white px-3 py-2 text-xs font-semibold text-brand-strong"
+                    className="rounded-full border border-line bg-[color:var(--surface-raised)] px-3 py-2 text-xs font-semibold text-brand-strong"
                     onClick={() => openEditModal(row)}
                     type="button"
                   >

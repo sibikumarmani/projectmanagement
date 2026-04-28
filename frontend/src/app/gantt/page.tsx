@@ -117,7 +117,7 @@ function statusTone(status: string) {
   if (normalized.includes("progress")) {
     return "bg-amber-500";
   }
-  return "bg-slate-500";
+  return "bg-[color:var(--surface-muted)]0";
 }
 
 function mapApiProjects(responseData: unknown) {
@@ -647,7 +647,7 @@ export default function GanttPage() {
             <label className="block">
               <span className="mb-2 block text-sm font-semibold text-brand-strong">Choose project</span>
               <select
-                className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 text-sm text-slate-700 outline-none ring-0"
+                className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 text-sm text-[color:var(--foreground)] outline-none ring-0"
                 disabled={projects.length === 0}
                 onChange={(event) => setSelectedProjectId(event.target.value)}
                 value={selectedProjectId}
@@ -661,16 +661,16 @@ export default function GanttPage() {
             </label>
 
             <div className="grid grid-cols-1 gap-2 text-center sm:grid-cols-3">
-              <div className="rounded-2xl border border-line bg-white/50 px-4 py-3">
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">WBS</p>
+              <div className="rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--foreground-subtle)]">WBS</p>
                 <p className="mt-1 text-xl font-semibold text-brand-strong">{wbsRows.length}</p>
               </div>
-              <div className="rounded-2xl border border-line bg-white/50 px-4 py-3">
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Activities</p>
+              <div className="rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--foreground-subtle)]">Activities</p>
                 <p className="mt-1 text-xl font-semibold text-brand-strong">{activities.length}</p>
               </div>
-              <div className="rounded-2xl border border-line bg-white/50 px-4 py-3">
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Milestones</p>
+              <div className="rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--foreground-subtle)]">Milestones</p>
                 <p className="mt-1 text-xl font-semibold text-brand-strong">{milestones.length}</p>
               </div>
             </div>
@@ -679,29 +679,29 @@ export default function GanttPage() {
 
         <SectionCard title={selectedProject ? `${selectedProject.projectCode} timeline` : "Timeline"} eyebrow="Gantt">
           {isLoading ? (
-            <div className="rounded-[22px] border border-line bg-white/35 px-4 py-8 text-sm text-slate-600">Loading Gantt chart...</div>
+            <div className="rounded-[22px] border border-line bg-[color:var(--surface-soft)] px-4 py-8 text-sm text-[color:var(--foreground-muted)]">Loading Gantt chart...</div>
           ) : timelineRows.length === 0 ? (
-            <div className="rounded-[22px] border border-dashed border-line bg-white/35 px-5 py-10 text-sm text-slate-600">
+            <div className="rounded-[22px] border border-dashed border-line bg-[color:var(--surface-soft)] px-5 py-10 text-sm text-[color:var(--foreground-muted)]">
               Create WBS and activities for this project to populate the Gantt chart.
             </div>
           ) : (
-            <div className="overflow-hidden rounded-[24px] border border-line bg-white/40">
-              <div className="border-b border-line bg-white/70 px-4 py-3">
+            <div className="overflow-hidden rounded-[24px] border border-line bg-[color:var(--surface-soft)]">
+              <div className="border-b border-line bg-[color:var(--surface-soft)] px-4 py-3">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--foreground-subtle)]">
                     Drag activity bars to move them. Drag the left or right edge to resize dates.
                   </p>
-                  <p className="mt-1 text-xs text-slate-500">
+                  <p className="mt-1 text-xs text-[color:var(--foreground-subtle)]">
                     Day shows hours, month shows days, year shows months. Use previous and next to move the visible window.
                   </p>
                 </div>
 
                 <div className="mt-3 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-                  <div className="inline-flex flex-wrap rounded-full border border-line bg-white/80 p-1">
+                  <div className="inline-flex flex-wrap rounded-full border border-line bg-[color:var(--surface-raised)] p-1">
                     {(["day", "month", "year"] as ZoomMode[]).map((mode) => (
                       <button
                         className={`rounded-full px-3 py-1.5 text-sm font-semibold transition ${
-                          zoomMode === mode ? "bg-brand text-white" : "text-slate-600 hover:bg-slate-100"
+                          zoomMode === mode ? "bg-brand text-white" : "text-[color:var(--foreground-muted)] hover:bg-slate-100"
                         }`}
                         key={mode}
                         onClick={() => setZoomMode(mode)}
@@ -712,9 +712,9 @@ export default function GanttPage() {
                     ))}
                   </div>
 
-                  <div className="inline-flex flex-wrap items-center rounded-full border border-line bg-white/80 p-1">
+                  <div className="inline-flex flex-wrap items-center rounded-full border border-line bg-[color:var(--surface-raised)] p-1">
                     <button
-                      className="rounded-full px-3 py-1.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-100"
+                      className="rounded-full px-3 py-1.5 text-sm font-semibold text-[color:var(--foreground-muted)] transition hover:bg-slate-100"
                       onClick={handlePrevious}
                       type="button"
                     >
@@ -722,7 +722,7 @@ export default function GanttPage() {
                     </button>
                     <div className="flex items-center px-3 text-sm font-semibold text-brand-strong">{visibleRange.title}</div>
                     <button
-                      className="rounded-full px-3 py-1.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-100"
+                      className="rounded-full px-3 py-1.5 text-sm font-semibold text-[color:var(--foreground-muted)] transition hover:bg-slate-100"
                       onClick={handleNext}
                       type="button"
                     >
@@ -733,17 +733,17 @@ export default function GanttPage() {
               </div>
 
               <div
-                className={`grid min-w-[980px] grid-cols-[280px_minmax(620px,1fr)] border-b border-line bg-white/70 text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 sm:grid-cols-[320px_minmax(620px,1fr)] ${
+                className={`grid min-w-[980px] grid-cols-[280px_minmax(620px,1fr)] border-b border-line bg-[color:var(--surface-soft)] text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--foreground-subtle)] sm:grid-cols-[320px_minmax(620px,1fr)] ${
                   dragState ? "select-none" : ""
                 }`}
               >
                 <div className="px-4 py-3">Task</div>
                 <div className="overflow-x-auto px-4 py-3">
-                  <div className="relative rounded-2xl border border-line/70 bg-white/75 shadow-[inset_0_1px_0_rgba(255,255,255,0.6)]" style={{ width: `${timelineWidth}px` }}>
-                    <div className="relative h-9 border-b border-line/70 bg-slate-50/80">
+                  <div className="relative rounded-2xl border border-line/70 bg-[color:var(--surface-soft)] shadow-[inset_0_1px_0_rgba(255,255,255,0.6)]" style={{ width: `${timelineWidth}px` }}>
+                    <div className="surface-muted relative h-9 border-b border-line/70">
                       {majorBands.map((band) => (
                         <div
-                          className="absolute inset-y-0 flex items-center border-r border-line/70 px-3 text-[11px] font-semibold tracking-[0.14em] text-slate-500 uppercase"
+                          className="absolute inset-y-0 flex items-center border-r border-line/70 px-3 text-[11px] font-semibold tracking-[0.14em] text-[color:var(--foreground-subtle)] uppercase"
                           key={band.key}
                           style={{ left: `${band.left}px`, width: `${band.width}px` }}
                         >
@@ -757,12 +757,12 @@ export default function GanttPage() {
                         const left = index * timelineConfig.columnWidth;
                         return (
                           <div
-                            className={`absolute inset-y-0 border-r border-line/60 ${column.shaded ? "bg-amber-50/80" : "bg-white/80"}`}
+                            className={`absolute inset-y-0 border-r border-line/60 ${column.shaded ? "bg-amber-50/80" : "bg-[color:var(--surface-raised)]"}`}
                             key={column.key}
                             style={{ left: `${left}px`, width: `${timelineConfig.columnWidth}px` }}
                           >
                             <div className="flex h-full flex-col items-center justify-center">
-                              <span className="text-[10px] font-semibold tracking-[0.12em] text-slate-400 uppercase">
+                              <span className="text-[10px] font-semibold tracking-[0.12em] text-[color:var(--foreground-subtle)] uppercase">
                                 {column.minorTop}
                               </span>
                               <span className="mt-1 text-xs font-semibold text-brand-strong">
@@ -780,7 +780,7 @@ export default function GanttPage() {
               <div className="max-h-[620px] overflow-auto">
                 {timelineRows.map((row) => (
                   <div
-                    className={`grid min-w-[980px] grid-cols-[280px_minmax(620px,1fr)] border-b border-line last:border-b-0 sm:grid-cols-[320px_minmax(620px,1fr)] ${row.type === "wbs" ? "bg-slate-50/80" : "bg-white/35"}`}
+                    className={`grid min-w-[980px] grid-cols-[280px_minmax(620px,1fr)] border-b border-line last:border-b-0 sm:grid-cols-[320px_minmax(620px,1fr)] ${row.type === "wbs" ? "surface-muted" : "bg-[color:var(--surface-soft)]"}`}
                     key={row.id}
                   >
                     <div className="px-4 py-3">
@@ -788,9 +788,9 @@ export default function GanttPage() {
                         <span className={`mt-1 h-2.5 w-2.5 rounded-full ${row.type === "wbs" ? "bg-brand" : statusTone(row.status)}`} />
                         <div>
                           <p className="font-semibold text-brand-strong">
-                            {row.code} <span className="font-normal text-slate-500">{row.name}</span>
+                            {row.code} <span className="font-normal text-[color:var(--foreground-subtle)]">{row.name}</span>
                           </p>
-                          <p className="mt-1 text-xs text-slate-500">
+                          <p className="mt-1 text-xs text-[color:var(--foreground-subtle)]">
                             {row.status}
                             {row.owner ? ` - ${row.owner}` : ""} - {row.progressPercent}%
                           </p>
@@ -799,12 +799,12 @@ export default function GanttPage() {
                     </div>
 
                     <div className="overflow-x-auto px-4 py-4">
-                      <div className="relative min-h-[62px] rounded-2xl border border-line/60 bg-white/40" style={{ width: `${timelineWidth}px` }}>
+                      <div className="relative min-h-[62px] rounded-2xl border border-line/60 bg-[color:var(--surface-soft)]" style={{ width: `${timelineWidth}px` }}>
                         {timelineColumns.map((column, index) => {
                           return (
                             <span
                               aria-hidden="true"
-                              className={`absolute inset-y-0 border-r border-line/50 ${column.shaded ? "bg-amber-50/60" : "bg-white/10"}`}
+                              className={`absolute inset-y-0 border-r border-line/50 ${column.shaded ? "bg-amber-50/60" : "bg-transparent"}`}
                               key={`${row.id}-${column.key}`}
                               style={{ left: `${index * timelineConfig.columnWidth}px`, width: `${timelineConfig.columnWidth}px` }}
                             />
@@ -830,11 +830,11 @@ export default function GanttPage() {
                           {row.type === "activity" ? (
                             <>
                               <span
-                                className="absolute left-0 top-1/2 h-6 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/80 bg-brand-strong shadow-sm"
+                                className="absolute left-0 top-1/2 h-6 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[color:var(--line-strong)] bg-brand-strong shadow-sm"
                                 onMouseDown={(event) => startBarEdit(event, row, "resize-start")}
                               />
                               <span
-                                className="absolute right-0 top-1/2 h-6 w-2.5 translate-x-1/2 -translate-y-1/2 rounded-full border border-white/80 bg-brand-strong shadow-sm"
+                                className="absolute right-0 top-1/2 h-6 w-2.5 translate-x-1/2 -translate-y-1/2 rounded-full border border-[color:var(--line-strong)] bg-brand-strong shadow-sm"
                                 onMouseDown={(event) => startBarEdit(event, row, "resize-end")}
                               />
                             </>
@@ -849,17 +849,17 @@ export default function GanttPage() {
                   <div className="grid min-w-[980px] grid-cols-[280px_minmax(620px,1fr)] bg-amber-50/50 sm:grid-cols-[320px_minmax(620px,1fr)]">
                     <div className="px-4 py-4">
                       <p className="font-semibold text-brand-strong">Milestones</p>
-                      <p className="mt-1 text-xs text-slate-500">
+                      <p className="mt-1 text-xs text-[color:var(--foreground-subtle)]">
                         Planned and actual dates{isSaving ? " - saving schedule changes..." : ""}
                       </p>
                     </div>
                     <div className="overflow-x-auto px-4 py-4">
-                      <div className="relative min-h-[82px] rounded-2xl border border-line/60 bg-white/40" style={{ width: `${timelineWidth}px` }}>
+                      <div className="relative min-h-[82px] rounded-2xl border border-line/60 bg-[color:var(--surface-soft)]" style={{ width: `${timelineWidth}px` }}>
                         {timelineColumns.map((column, index) => {
                           return (
                             <span
                               aria-hidden="true"
-                              className={`absolute inset-y-0 border-r border-line/50 ${column.shaded ? "bg-amber-50/60" : "bg-white/10"}`}
+                              className={`absolute inset-y-0 border-r border-line/50 ${column.shaded ? "bg-amber-50/60" : "bg-transparent"}`}
                               key={`milestone-${column.key}`}
                               style={{ left: `${index * timelineConfig.columnWidth}px`, width: `${timelineConfig.columnWidth}px` }}
                             />

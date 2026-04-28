@@ -19,7 +19,7 @@ export function SectionCard({ title, eyebrow, action, children }: SectionCardPro
         </div>
         {action ? <div className="w-full sm:w-auto">{action}</div> : null}
       </div>
-      <div className="flex-1">{children}</div>
+      <div className="min-h-0 flex-1">{children}</div>
     </section>
   );
 }

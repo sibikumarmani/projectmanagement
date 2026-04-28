@@ -220,7 +220,7 @@ export default function UsersPage() {
         {error ? <p className="mb-4 rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</p> : null}
 
         {isLoading ? (
-          <div className="rounded-[22px] border border-line bg-white/35 px-4 py-8 text-sm text-slate-600">Loading users...</div>
+          <div className="rounded-[22px] border border-line bg-[color:var(--surface-soft)] px-4 py-8 text-sm text-[color:var(--foreground-muted)]">Loading users...</div>
         ) : (
           <DataTable
             rows={users}
@@ -237,7 +237,7 @@ export default function UsersPage() {
                 key: "active",
                 header: "Status",
                 render: (row) => (
-                  <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold">
+                  <span className="rounded-full bg-[color:var(--surface-raised)] px-3 py-1 text-xs font-semibold">
                     {row.active ? "Active" : "Inactive"}
                   </span>
                 ),
@@ -246,7 +246,7 @@ export default function UsersPage() {
                 key: "emailVerified",
                 header: "Email",
                 render: (row) => (
-                  <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold">
+                  <span className="rounded-full bg-[color:var(--surface-raised)] px-3 py-1 text-xs font-semibold">
                     {row.emailVerified ? "Verified" : "Pending"}
                   </span>
                 ),
@@ -257,14 +257,14 @@ export default function UsersPage() {
                 render: (row) => (
                   <div className="flex gap-2">
                     <button
-                      className="rounded-full border border-line bg-white px-3 py-2 text-xs font-semibold text-brand-strong"
+                      className="rounded-full border border-line bg-[color:var(--surface-raised)] px-3 py-2 text-xs font-semibold text-brand-strong"
                       onClick={() => openEditModal(row)}
                       type="button"
                     >
                       Edit
                     </button>
                     <button
-                      className="rounded-full border border-line bg-white px-3 py-2 text-xs font-semibold text-brand-strong"
+                      className="rounded-full border border-line bg-[color:var(--surface-raised)] px-3 py-2 text-xs font-semibold text-brand-strong"
                       onClick={() => void openResetCodeModal(row)}
                       type="button"
                     >
@@ -315,33 +315,33 @@ export default function UsersPage() {
         widthClassName="sm:max-w-2xl"
       >
             {isLoadingResetCode ? (
-              <div className="rounded-[22px] border border-line bg-white/35 px-4 py-8 text-sm text-slate-600">Loading reset code...</div>
+              <div className="rounded-[22px] border border-line bg-[color:var(--surface-soft)] px-4 py-8 text-sm text-[color:var(--foreground-muted)]">Loading reset code...</div>
             ) : resetCodeError ? (
               <p className="rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{resetCodeError}</p>
             ) : selectedResetCode ? (
               <div className="space-y-4">
                 <div className="grid gap-4 md:grid-cols-2">
-                  <div className="rounded-2xl border border-line bg-white/60 p-4">
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">User</p>
+                  <div className="rounded-2xl border border-line bg-[color:var(--surface-glass)] p-4">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--foreground-subtle)]">User</p>
                     <p className="mt-2 text-sm font-semibold text-brand-strong">{selectedResetCode.userCode}</p>
-                    <p className="mt-1 text-sm text-slate-600">{selectedResetCode.email}</p>
+                    <p className="mt-1 text-sm text-[color:var(--foreground-muted)]">{selectedResetCode.email}</p>
                   </div>
-                  <div className="rounded-2xl border border-line bg-white/60 p-4">
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Expiry</p>
+                  <div className="rounded-2xl border border-line bg-[color:var(--surface-glass)] p-4">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--foreground-subtle)]">Expiry</p>
                     <p className="mt-2 text-sm font-semibold text-brand-strong">{formatTimestamp(selectedResetCode.expiresAt)}</p>
-                    <p className="mt-1 text-sm text-slate-600">
+                    <p className="mt-1 text-sm text-[color:var(--foreground-muted)]">
                       {selectedResetCode.consumed === null ? "No code status available" : selectedResetCode.consumed ? "Consumed" : "Not consumed"}
                     </p>
                   </div>
                 </div>
 
-                <div className="rounded-2xl border border-line bg-white/60 p-5">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Latest Reset Code</p>
+                <div className="rounded-2xl border border-line bg-[color:var(--surface-glass)] p-5">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--foreground-subtle)]">Latest Reset Code</p>
                   <p className="mt-3 font-mono text-3xl font-semibold tracking-[0.35em] text-brand-strong">
                     {selectedResetCode.available ? selectedResetCode.resetCode : "N/A"}
                   </p>
                   {!selectedResetCode.available ? (
-                    <p className="mt-3 text-sm text-slate-600">No password reset code has been generated for this user yet.</p>
+                    <p className="mt-3 text-sm text-[color:var(--foreground-muted)]">No password reset code has been generated for this user yet.</p>
                   ) : null}
                 </div>
               </div>

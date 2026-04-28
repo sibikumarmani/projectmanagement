@@ -108,7 +108,7 @@ export function TimesheetForm({
     <form className="grid gap-4 md:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Employee</span>
-        <select {...register("userId")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0">
+        <select {...register("userId")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0">
           <option value="">Select an employee</option>
           {employeeOptions.map((option) => (
             <option key={option.value} value={option.value}>
@@ -121,7 +121,7 @@ export function TimesheetForm({
 
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Project</span>
-        <select {...register("projectId")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0">
+        <select {...register("projectId")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0">
           <option value="">Select a project</option>
           {projectOptions.map((option) => (
             <option key={option.value} value={option.value}>
@@ -134,7 +134,7 @@ export function TimesheetForm({
 
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Entry Type</span>
-        <select {...register("entryMode")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0">
+        <select {...register("entryMode")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0">
           <option value="ALLOCATED">Allocated Activity</option>
           <option value="NON_ALLOCATED">Non-Allocated Activity</option>
         </select>
@@ -142,7 +142,7 @@ export function TimesheetForm({
 
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Status</span>
-        <select {...register("status")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0">
+        <select {...register("status")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0">
           {statusOptions.map((status) => (
             <option key={status} value={status}>
               {status}
@@ -154,7 +154,7 @@ export function TimesheetForm({
 
       <label className="block md:col-span-2">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Activity</span>
-        <select {...register("activityId")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0" disabled={!userId || !projectId}>
+        <select {...register("activityId")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0" disabled={!userId || !projectId}>
           <option value="">{userId && projectId ? "Select an activity" : "Select employee and project first"}</option>
           {activityOptions.map((option) => (
             <option key={option.value} value={option.value}>
@@ -163,36 +163,36 @@ export function TimesheetForm({
           ))}
         </select>
         <span className="mt-2 block text-xs text-rose-600">{errors.activityId?.message}</span>
-        {activityHint ? <span className="mt-2 block text-xs text-slate-500">{activityHint}</span> : null}
+        {activityHint ? <span className="mt-2 block text-xs text-[color:var(--foreground-subtle)]">{activityHint}</span> : null}
       </label>
 
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Work Date</span>
-        <input {...register("workDate")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0" type="date" />
+        <input {...register("workDate")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0" type="date" />
         <span className="mt-2 block text-xs text-rose-600">{errors.workDate?.message}</span>
       </label>
 
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Regular Hours</span>
-        <input {...register("regularHours", { valueAsNumber: true })} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0" type="number" min={0} step="0.5" />
+        <input {...register("regularHours", { valueAsNumber: true })} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0" type="number" min={0} step="0.5" />
         <span className="mt-2 block text-xs text-rose-600">{errors.regularHours?.message}</span>
       </label>
 
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Overtime Hours</span>
-        <input {...register("overtimeHours", { valueAsNumber: true })} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0" type="number" min={0} step="0.5" />
+        <input {...register("overtimeHours", { valueAsNumber: true })} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0" type="number" min={0} step="0.5" />
         <span className="mt-2 block text-xs text-rose-600">{errors.overtimeHours?.message}</span>
       </label>
 
       <label className="block md:col-span-2">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Remarks</span>
-        <textarea {...register("remarks")} className="min-h-28 w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0" />
+        <textarea {...register("remarks")} className="min-h-28 w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0" />
       </label>
 
       {error ? <p className="md:col-span-2 rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</p> : null}
 
       <div className="md:col-span-2 flex items-center justify-end gap-3 border-t border-line pt-4">
-        <button className="rounded-full border border-line bg-white/70 px-5 py-3 text-sm font-semibold text-slate-700" onClick={onCancel} type="button">
+        <button className="rounded-full border border-line bg-[color:var(--surface-soft)] px-5 py-3 text-sm font-semibold text-[color:var(--foreground)]" onClick={onCancel} type="button">
           Cancel
         </button>
         <button className="rounded-full bg-brand-strong px-5 py-3 text-sm font-semibold text-white" disabled={isSubmitting} type="submit">

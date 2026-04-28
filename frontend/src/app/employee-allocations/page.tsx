@@ -256,7 +256,7 @@ export default function EmployeeAllocationsPage() {
         {error ? <p className="mb-4 rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</p> : null}
 
         {isLoading ? (
-          <div className="rounded-[22px] border border-line bg-white/35 px-4 py-8 text-sm text-slate-600">Loading employee allocations...</div>
+          <div className="rounded-[22px] border border-line bg-[color:var(--surface-soft)] px-4 py-8 text-sm text-[color:var(--foreground-muted)]">Loading employee allocations...</div>
         ) : (
           <DataTable
             rows={allocations}
@@ -274,13 +274,13 @@ export default function EmployeeAllocationsPage() {
               {
                 key: "active",
                 header: "Status",
-                render: (row) => <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold">{row.active ? "Active" : "Inactive"}</span>,
+                render: (row) => <span className="rounded-full bg-[color:var(--surface-raised)] px-3 py-1 text-xs font-semibold">{row.active ? "Active" : "Inactive"}</span>,
               },
               {
                 key: "actions",
                 header: "Actions",
                 render: (row) => (
-                  <button className="rounded-full border border-line bg-white px-3 py-2 text-xs font-semibold text-brand-strong" onClick={() => openEditModal(row)} type="button">
+                  <button className="rounded-full border border-line bg-[color:var(--surface-raised)] px-3 py-2 text-xs font-semibold text-brand-strong" onClick={() => openEditModal(row)} type="button">
                     Edit
                   </button>
                 ),

@@ -11,22 +11,28 @@ type MilestonePulseItem = {
 
 export function CostTrendChart({ data }: { data: ReportSnapshot[] }) {
   const isClient = useIsClient();
+  const tooltipStyle = {
+    backgroundColor: "var(--surface-raised)",
+    border: "1px solid var(--line)",
+    borderRadius: "18px",
+    color: "var(--foreground)",
+  } as const;
 
   if (!isClient) {
-    return <div className="h-[300px] w-full rounded-none bg-white/40" />;
+    return <div className="surface-soft h-[300px] w-full rounded-none" />;
   }
 
   return (
     <div className="h-[300px] w-full">
       <ResponsiveContainer>
         <BarChart data={data}>
-          <CartesianGrid vertical={false} stroke="rgba(16,32,51,0.08)" />
-          <XAxis dataKey="month" tickLine={false} axisLine={false} />
-          <YAxis tickLine={false} axisLine={false} />
-          <Tooltip />
-          <Bar dataKey="budget" fill="#163a57" radius={[10, 10, 0, 0]} />
-          <Bar dataKey="allocated" fill="#bf5a36" radius={[10, 10, 0, 0]} />
-          <Bar dataKey="actual" fill="#d6c2a4" radius={[10, 10, 0, 0]} />
+          <CartesianGrid vertical={false} stroke="var(--chart-grid)" />
+          <XAxis dataKey="month" tick={{ fill: "var(--chart-axis)" }} tickLine={false} axisLine={false} />
+          <YAxis tick={{ fill: "var(--chart-axis)" }} tickLine={false} axisLine={false} />
+          <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "color-mix(in srgb, var(--brand) 10%, transparent)" }} />
+          <Bar dataKey="budget" fill="var(--chart-budget)" radius={[10, 10, 0, 0]} />
+          <Bar dataKey="allocated" fill="var(--chart-allocated)" radius={[10, 10, 0, 0]} />
+          <Bar dataKey="actual" fill="var(--chart-actual)" radius={[10, 10, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>
@@ -35,10 +41,16 @@ export function CostTrendChart({ data }: { data: ReportSnapshot[] }) {
 
 export function MilestonePulseChart({ data }: { data: MilestonePulseItem[] }) {
   const isClient = useIsClient();
-  const colors = ["#163a57", "#bf5a36", "#c17b1f"];
+  const colors = ["var(--chart-budget)", "var(--chart-allocated)", "var(--chart-actual)"];
+  const tooltipStyle = {
+    backgroundColor: "var(--surface-raised)",
+    border: "1px solid var(--line)",
+    borderRadius: "18px",
+    color: "var(--foreground)",
+  } as const;
 
   if (!isClient) {
-    return <div className="h-[300px] w-full rounded-none bg-white/40" />;
+    return <div className="surface-soft h-[300px] w-full rounded-none" />;
   }
 
   return (
@@ -50,7 +62,7 @@ export function MilestonePulseChart({ data }: { data: MilestonePulseItem[] }) {
               <Cell key={entry.name} fill={colors[index % colors.length]} />
             ))}
           </Pie>
-          <Tooltip />
+          <Tooltip contentStyle={tooltipStyle} />
         </PieChart>
       </ResponsiveContainer>
     </div>

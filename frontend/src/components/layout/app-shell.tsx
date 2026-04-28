@@ -135,8 +135,8 @@ export function AppShell({ title, subtitle, children }: AppShellProps) {
       <button
         className={`fixed bottom-4 right-4 z-40 inline-flex items-center gap-3 rounded-full px-4 py-3 text-sm font-semibold shadow-2xl transition sm:bottom-6 sm:right-6 sm:px-5 sm:py-4 ${
           isAgentOpen
-            ? "bg-slate-900 text-white shadow-slate-900/25"
-            : "bg-[linear-gradient(135deg,#173a59,#29547d)] text-white shadow-slate-900/20 hover:translate-y-[-1px]"
+            ? "btn-secondary shadow-slate-900/25"
+            : "btn-primary shadow-slate-900/20 hover:translate-y-[-1px]"
         }`}
         onClick={() => setIsAgentOpen((current) => !current)}
         type="button"
@@ -150,34 +150,38 @@ export function AppShell({ title, subtitle, children }: AppShellProps) {
       >
         <button
           aria-label="Close agent popup"
-          className={`absolute inset-0 bg-slate-950/35 transition ${isAgentOpen ? "opacity-100" : "opacity-0"}`}
+          className={`overlay-scrim absolute inset-0 transition ${isAgentOpen ? "opacity-100" : "opacity-0"}`}
           onClick={() => setIsAgentOpen(false)}
           type="button"
         />
         <section
-          className={`absolute bottom-0 left-0 right-0 mx-auto w-full max-w-6xl rounded-t-[28px] border border-white/60 bg-[linear-gradient(180deg,rgba(255,251,246,0.98),rgba(245,240,232,0.98))] p-4 shadow-2xl shadow-slate-900/20 transition duration-300 sm:rounded-t-[34px] md:p-5 ${
-            isAgentOpen ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
+          className={`page-surface absolute right-0 top-0 h-full w-full max-w-2xl border-l border-[color:var(--line-strong)] p-4 shadow-2xl shadow-slate-900/20 transition duration-300 md:p-5 ${
+            isAgentOpen ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
           }`}
         >
-          <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex h-full flex-col">
+            <div className="mb-4 flex flex-col gap-4 border-b border-line pb-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.24em] text-brand">Agent Popup</p>
+              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.24em] text-brand">Agent Sidebar</p>
               <h3 className="display-font text-xl font-semibold text-brand-strong sm:text-2xl">Create data with chat</h3>
               <p className="mt-2 max-w-3xl text-sm leading-6 text-[color:var(--foreground-muted)]">
-                Describe the records you need, and the agent will create linked PMS data from the bottom sheet without
+                Describe the records you need, and the agent will create linked PMS data from the side panel without
                 leaving the current page.
               </p>
             </div>
             <button
-              className="rounded-full border border-[color:var(--line-strong)] bg-white/80 p-3 text-[color:var(--foreground-muted)]"
+              className="btn-secondary rounded-full p-3 text-[color:var(--foreground-muted)]"
               onClick={() => setIsAgentOpen(false)}
               type="button"
             >
               <X className="h-4 w-4" />
             </button>
-          </div>
+            </div>
 
-          <AgentPanel compact />
+            <div className="min-h-0 flex-1 overflow-hidden">
+              <AgentPanel compact />
+            </div>
+          </div>
         </section>
       </div>
     </div>

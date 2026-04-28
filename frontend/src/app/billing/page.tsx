@@ -499,7 +499,7 @@ export default function BillingPage() {
         action={
           <div className="flex flex-col gap-3 sm:flex-row">
             <select
-              className="rounded-full border border-line bg-white/70 px-4 py-3 text-sm font-semibold text-slate-700"
+              className="rounded-full border border-line bg-[color:var(--surface-soft)] px-4 py-3 text-sm font-semibold text-[color:var(--foreground)]"
               disabled={isProjectsLoading || projects.length === 0}
               onChange={(event) => setSelectedProjectId(event.target.value)}
               value={selectedProjectId}
@@ -511,7 +511,7 @@ export default function BillingPage() {
               ))}
             </select>
             <button
-              className="rounded-full border border-line bg-white/70 px-5 py-3 text-sm font-semibold text-brand-strong"
+              className="rounded-full border border-line bg-[color:var(--surface-soft)] px-5 py-3 text-sm font-semibold text-brand-strong"
               disabled={!hasValidSelectedProject}
               onClick={handlePrint}
               type="button"
@@ -532,24 +532,24 @@ export default function BillingPage() {
         {error ? <p className="mb-4 rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</p> : null}
 
         <div className="mb-4 grid gap-4 md:grid-cols-3 print:grid-cols-3">
-          <div className="rounded-2xl border border-line bg-white/55 px-4 py-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Selected Project</p>
+          <div className="rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--foreground-subtle)]">Selected Project</p>
             <p className="mt-2 text-sm font-semibold text-brand-strong">
               {currentProject ? `${currentProject.projectCode} - ${currentProject.projectName}` : "No project selected"}
             </p>
           </div>
-          <div className="rounded-2xl border border-line bg-white/55 px-4 py-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Total Billed</p>
+          <div className="rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--foreground-subtle)]">Total Billed</p>
             <p className="mt-2 text-sm font-semibold text-brand-strong">{formatCurrency(totalBilledAmount)}</p>
           </div>
-          <div className="rounded-2xl border border-line bg-white/55 px-4 py-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Total Certified</p>
+          <div className="rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--foreground-subtle)]">Total Certified</p>
             <p className="mt-2 text-sm font-semibold text-brand-strong">{formatCurrency(totalCertifiedAmount)}</p>
           </div>
         </div>
 
         {isProjectsLoading || (hasValidSelectedProject && isBillingLoading) ? (
-          <div className="rounded-[22px] border border-line bg-white/35 px-4 py-8 text-sm text-slate-600">Loading billing data...</div>
+          <div className="rounded-[22px] border border-line bg-[color:var(--surface-soft)] px-4 py-8 text-sm text-[color:var(--foreground-muted)]">Loading billing data...</div>
         ) : (
           <DataTable
             rows={hasValidSelectedProject ? billings : []}
@@ -568,14 +568,14 @@ export default function BillingPage() {
                 render: (row) => (
                   <div className="flex gap-2 print:hidden">
                     <button
-                      className="rounded-full border border-line bg-white px-3 py-2 text-xs font-semibold text-brand-strong"
+                      className="rounded-full border border-line bg-[color:var(--surface-raised)] px-3 py-2 text-xs font-semibold text-brand-strong"
                       onClick={() => openReceiptModal(row)}
                       type="button"
                     >
                       Receipt
                     </button>
                     <button
-                      className="rounded-full border border-line bg-white px-3 py-2 text-xs font-semibold text-brand-strong"
+                      className="rounded-full border border-line bg-[color:var(--surface-raised)] px-3 py-2 text-xs font-semibold text-brand-strong"
                       onClick={() => openEditModal(row)}
                       type="button"
                     >
@@ -628,56 +628,56 @@ export default function BillingPage() {
         widthClassName="sm:max-w-3xl"
       >
         {receiptBilling ? (
-          <div className="rounded-[24px] border border-line bg-white/75 p-6">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Project Management and Cost Control System</p>
+          <div className="rounded-[24px] border border-line bg-[color:var(--surface-soft)] p-6">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--foreground-subtle)]">Project Management and Cost Control System</p>
               <h3 className="mt-2 display-font text-3xl font-semibold text-brand-strong">Billing Receipt</h3>
-              <p className="mt-2 text-sm text-slate-600">Milestone-level billing receipt generated from the selected project.</p>
+              <p className="mt-2 text-sm text-[color:var(--foreground-muted)]">Milestone-level billing receipt generated from the selected project.</p>
 
               <div className="mt-6 grid gap-4 md:grid-cols-2">
-                <div className="rounded-2xl border border-line bg-white/70 px-4 py-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Project</p>
+                <div className="rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--foreground-subtle)]">Project</p>
                   <p className="mt-2 text-sm font-semibold text-brand-strong">
                     {currentProject ? `${currentProject.projectCode} - ${currentProject.projectName}` : "Selected project"}
                   </p>
                 </div>
-                <div className="rounded-2xl border border-line bg-white/70 px-4 py-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Billing Date</p>
+                <div className="rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--foreground-subtle)]">Billing Date</p>
                   <p className="mt-2 text-sm font-semibold text-brand-strong">{receiptBilling.billingDate}</p>
                 </div>
-                <div className="rounded-2xl border border-line bg-white/70 px-4 py-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Milestone</p>
+                <div className="rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--foreground-subtle)]">Milestone</p>
                   <p className="mt-2 text-sm font-semibold text-brand-strong">
                     {receiptBilling.milestoneCode} - {receiptBilling.milestoneName}
                   </p>
                 </div>
-                <div className="rounded-2xl border border-line bg-white/70 px-4 py-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Status</p>
+                <div className="rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--foreground-subtle)]">Status</p>
                   <p className="mt-2 text-sm font-semibold text-brand-strong">{formatStatus(receiptBilling.status)}</p>
                 </div>
-                <div className="rounded-2xl border border-line bg-white/70 px-4 py-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Billed Amount</p>
+                <div className="rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--foreground-subtle)]">Billed Amount</p>
                   <p className="mt-2 text-sm font-semibold text-brand-strong">{formatCurrency(receiptBilling.billedAmount)}</p>
                 </div>
-                <div className="rounded-2xl border border-line bg-white/70 px-4 py-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Certified Amount</p>
+                <div className="rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--foreground-subtle)]">Certified Amount</p>
                   <p className="mt-2 text-sm font-semibold text-brand-strong">{formatCurrency(receiptBilling.certifiedAmount)}</p>
                 </div>
-                <div className="rounded-2xl border border-line bg-white/70 px-4 py-4 md:col-span-2">
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Remarks</p>
+                <div className="rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-4 md:col-span-2">
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--foreground-subtle)]">Remarks</p>
                   <p className="mt-2 text-sm font-semibold text-brand-strong">{receiptBilling.remarks ?? "No remarks"}</p>
                 </div>
               </div>
 
               <div className="mt-6 flex items-center justify-between border-t border-line pt-4">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Outstanding</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--foreground-subtle)]">Outstanding</p>
                   <p className="mt-2 text-lg font-semibold text-brand-strong">
                     {formatCurrency(receiptBilling.billedAmount - receiptBilling.certifiedAmount)}
                   </p>
                 </div>
                 <div className="flex gap-3">
                   <button
-                    className="rounded-full border border-line bg-white px-5 py-3 text-sm font-semibold text-brand-strong"
+                    className="rounded-full border border-line bg-[color:var(--surface-raised)] px-5 py-3 text-sm font-semibold text-brand-strong"
                     onClick={() => handlePrintReceipt(receiptBilling)}
                     type="button"
                   >

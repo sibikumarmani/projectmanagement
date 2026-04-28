@@ -73,13 +73,13 @@ export function UserForm({
     <form className="grid gap-4 md:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
       <label className="block md:col-span-2">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Full Name</span>
-        <input {...register("fullName")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0" type="text" />
+        <input {...register("fullName")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0" type="text" />
         <span className="mt-2 block text-xs text-rose-600">{errors.fullName?.message}</span>
       </label>
 
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Email</span>
-        <input {...register("email")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0" type="email" />
+        <input {...register("email")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0" type="email" />
         <span className="mt-2 block text-xs text-rose-600">{errors.email?.message}</span>
       </label>
 
@@ -87,7 +87,7 @@ export function UserForm({
         <span className="mb-2 block text-sm font-semibold text-brand-strong">{isEditing ? "New Password (Optional)" : "Password"}</span>
         <input
           {...register("password")}
-          className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0"
+          className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0"
           placeholder={isEditing ? "Leave blank to keep the current password" : "Minimum 8 characters"}
           type="password"
         />
@@ -96,7 +96,7 @@ export function UserForm({
 
       <label className="block">
         <span className="mb-2 block text-sm font-semibold text-brand-strong">Role</span>
-        <select {...register("roleName")} className="w-full rounded-2xl border border-line bg-white/70 px-4 py-3 outline-none ring-0">
+        <select {...register("roleName")} className="w-full rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3 outline-none ring-0">
           {roleOptions.map((role) => (
             <option key={role} value={role}>
               {role.replaceAll("_", " ")}
@@ -106,12 +106,12 @@ export function UserForm({
         <span className="mt-2 block text-xs text-rose-600">{errors.roleName?.message}</span>
       </label>
 
-      <label className="flex items-center gap-3 rounded-2xl border border-line bg-white/70 px-4 py-3">
+      <label className="flex items-center gap-3 rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3">
         <input {...register("active")} className="h-4 w-4" type="checkbox" />
         <span className="text-sm font-semibold text-brand-strong">Active user</span>
       </label>
 
-      <label className="flex items-center gap-3 rounded-2xl border border-line bg-white/70 px-4 py-3">
+      <label className="flex items-center gap-3 rounded-2xl border border-line bg-[color:var(--surface-soft)] px-4 py-3">
         <input {...register("emailVerified")} className="h-4 w-4" type="checkbox" />
         <span className="text-sm font-semibold text-brand-strong">Email verified</span>
       </label>
@@ -120,7 +120,7 @@ export function UserForm({
 
       <div className="md:col-span-2 flex items-center justify-end gap-3 border-t border-line pt-4">
         <button
-          className="rounded-full border border-line bg-white/70 px-5 py-3 text-sm font-semibold text-slate-700"
+          className="rounded-full border border-line bg-[color:var(--surface-soft)] px-5 py-3 text-sm font-semibold text-[color:var(--foreground)]"
           onClick={onCancel}
           type="button"
         >

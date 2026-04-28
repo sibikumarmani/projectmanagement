@@ -236,7 +236,7 @@ export default function MaterialRequestsPage() {
         {error ? <p className="mb-4 rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</p> : null}
 
         {isLoading ? (
-          <div className="rounded-[22px] border border-line bg-white/35 px-4 py-8 text-sm text-slate-600">
+          <div className="rounded-[22px] border border-line bg-[color:var(--surface-soft)] px-4 py-8 text-sm text-[color:var(--foreground-muted)]">
             Loading material requests...
           </div>
         ) : (
@@ -250,7 +250,7 @@ export default function MaterialRequestsPage() {
               {
                 key: "status",
                 header: "Status",
-                render: (row) => <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold">{formatStatus(row.status)}</span>,
+                render: (row) => <span className="rounded-full bg-[color:var(--surface-raised)] px-3 py-1 text-xs font-semibold">{formatStatus(row.status)}</span>,
               },
               { key: "requestedQty", header: "Requested", render: (row) => formatQuantity(row.requestedQty) },
               { key: "approvedQty", header: "Approved", render: (row) => formatQuantity(row.approvedQty) },
@@ -260,7 +260,7 @@ export default function MaterialRequestsPage() {
                 header: "Actions",
                 render: (row) => (
                   <button
-                    className="rounded-full border border-line bg-white px-3 py-2 text-xs font-semibold text-brand-strong"
+                    className="rounded-full border border-line bg-[color:var(--surface-raised)] px-3 py-2 text-xs font-semibold text-brand-strong"
                     onClick={() => openEditModal(row)}
                     type="button"
                   >
