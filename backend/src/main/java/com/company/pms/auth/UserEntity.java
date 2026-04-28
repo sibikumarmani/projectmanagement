@@ -45,4 +45,7 @@ public class UserEntity {
 
     @Column(name = "email_verified", nullable = false)
     private Boolean emailVerified;
+
+    @Column(name = "avatar_image", columnDefinition = "LONGTEXT")
+    private String avatarImage;
 }

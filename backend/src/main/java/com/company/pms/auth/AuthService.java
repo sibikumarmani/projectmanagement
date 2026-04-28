@@ -212,7 +212,14 @@ public class AuthService {
             accessToken,
             refreshTokenValue,
             "Bearer",
-            new AuthResponse.UserProfile(user.getId(), user.getUserCode(), user.getFullName(), user.getEmail(), user.getRoleName())
+            new AuthResponse.UserProfile(
+                user.getId(),
+                user.getUserCode(),
+                user.getFullName(),
+                user.getEmail(),
+                user.getRoleName(),
+                user.getAvatarImage()
+            )
         );
     }
 

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { Bot, X } from "lucide-react";
 import { AgentPanel } from "@/components/agent/agent-panel";
 import { useIsClient } from "@/hooks/use-is-client";
+import { accountApi } from "@/lib/api";
 import { navigationItems } from "@/lib/navigation";
 import { useAppStore } from "@/store/app-store";
 import { LayoutWrapper } from "@/components/layout/layout-wrapper";
@@ -21,7 +22,7 @@ type AppShellProps = {
 export function AppShell({ title, subtitle, children }: AppShellProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const { accessToken, hasHydrated, user, clearAuth } = useAppStore();
+  const { accessToken, hasHydrated, user, clearAuth, updateUser } = useAppStore();
   const isClient = useIsClient();
   const [isAgentOpen, setIsAgentOpen] = useState(false);
   const userInitials = user?.fullName
@@ -52,6 +53,40 @@ export function AppShell({ title, subtitle, children }: AppShellProps) {
     };
   }, [pathname]);
 
+  useEffect(() => {
+    if (!accessToken) {
+      return;
+    }
+
+    let cancelled = false;
+
+    async function syncProfile() {
+      try {
+        const response = await accountApi.getProfile();
+        if (cancelled) {
+          return;
+        }
+
+        const profile = response.data.data;
+        updateUser({
+          fullName: profile.fullName,
+          userCode: profile.userCode,
+          email: profile.email,
+          roleName: profile.roleName,
+          avatarImage: profile.avatarImage,
+        });
+      } catch {
+        return;
+      }
+    }
+
+    void syncProfile();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [accessToken, updateUser]);
+
   if (!isClient || !hasHydrated || !accessToken) {
     return (
       <main className="flex min-h-screen items-center justify-center px-4 py-10">
@@ -67,7 +102,24 @@ export function AppShell({ title, subtitle, children }: AppShellProps) {
           appName="Project Management & Cost Control"
           avatarLabel={userInitials}
           userName={user?.fullName ?? "User"}
+          userEmail={user?.email ?? ""}
+          userCode={user?.userCode ?? ""}
+          avatarImage={user?.avatarImage ?? null}
           userRole={user?.roleName ?? user?.email ?? "Member"}
+          onProfileSave={async ({ fullName, avatarImage }) => {
+            const response = await accountApi.updateProfile({ fullName, avatarImage });
+            const profile = response.data.data;
+            updateUser({
+              fullName: profile.fullName,
+              userCode: profile.userCode,
+              email: profile.email,
+              roleName: profile.roleName,
+              avatarImage: profile.avatarImage,
+            });
+          }}
+          onPasswordChange={async ({ currentPassword, newPassword }) => {
+            await accountApi.changePassword({ currentPassword, newPassword });
+          }}
           onLogout={() => {
             clearAuth();
             router.replace("/login");

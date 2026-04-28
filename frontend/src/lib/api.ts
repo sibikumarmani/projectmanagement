@@ -45,6 +45,12 @@ export const authApi = {
   refresh: (payload: { refreshToken: string }) => api.post("/auth/refresh", payload),
 };
 
+export const accountApi = {
+  getProfile: () => api.get("/account/me"),
+  updateProfile: (payload: { fullName: string; avatarImage: string | null }) => api.put("/account/me", payload),
+  changePassword: (payload: { currentPassword: string; newPassword: string }) => api.post("/account/change-password", payload),
+};
+
 export const agentApi = {
   chat: (payload: {
     message: string;

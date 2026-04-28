@@ -6,6 +6,6 @@ public record AuthResponse(
     String tokenType,
     UserProfile user
 ) {
-    public record UserProfile(Long id, String userCode, String fullName, String email, String roleName) {
+    public record UserProfile(Long id, String userCode, String fullName, String email, String roleName, String avatarImage) {
     }
 }
